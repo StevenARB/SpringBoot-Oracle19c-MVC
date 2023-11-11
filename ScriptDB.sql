@@ -13,7 +13,8 @@ CREATE TABLE C##HospitalExpress.Usuarios (
     estado VARCHAR2(25)
 );
 
-CREATE TABLE C##HospitalExpress.Empleado (
+
+CREATE TABLE C##HospitalExpress.Factura (
     id_usuario INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username VARCHAR2(255),
     password VARCHAR2(255),
