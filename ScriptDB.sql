@@ -13,6 +13,14 @@ CREATE TABLE C##HospitalExpress.Usuarios (
     estado VARCHAR2(25)
 );
 
+CREATE TABLE C##HospitalExpress.Empleado (
+    id_usuario INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    username VARCHAR2(255),
+    password VARCHAR2(255),
+    rol VARCHAR2(25),
+    estado VARCHAR2(25)
+);
+
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_USUARIO (
     p_username IN VARCHAR2,
     p_password IN VARCHAR2,
