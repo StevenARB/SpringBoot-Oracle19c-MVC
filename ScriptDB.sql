@@ -33,6 +33,7 @@ CREATE TABLE C##HospitalExpress.Cita (
     estado VARCHAR(100)
 );
 
+--CREACION DE PROCEDIMIENTOS
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_USUARIO (
     p_username IN VARCHAR2,
     p_password IN VARCHAR2,
