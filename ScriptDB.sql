@@ -45,3 +45,13 @@ EXCEPTION
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
+
+--TABLA CITA
+CREATE TABLE C##HospitalExpress.Cita (
+    id_cita INTEGER PRIMARY KEY,
+    id_doctor INTEGER,
+    id_paciente INTEGER,
+    tipo VARCHAR(100),
+    fecha_hora DATE,
+    estado VARCHAR(100)
+);
