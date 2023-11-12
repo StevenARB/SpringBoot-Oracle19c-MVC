@@ -5,6 +5,7 @@ QUOTA UNLIMITED ON USERS;
 
 GRANT DBA TO C##HospitalExpress;
 
+--CREACION DE TABLAS
 CREATE TABLE C##HospitalExpress.Usuarios (
     id_usuario INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username VARCHAR2(255),
@@ -139,7 +140,7 @@ BEGIN
     DELETE FROM Cita
     WHERE id_cita = p_id_cita;
 
-    p_resultado := 'Cita eliminada con éxito';
+    p_resultado := 'Cita eliminada con ï¿½xito';
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         p_resultado := 'ERROR: La cita ' || p_id_cita || ' no fue encontrada.';
