@@ -296,3 +296,64 @@ SELECT
     estado
 FROM
     doctor;
+       
+CREATE TABLE C##HospitalExpress.Medicamentos (
+    id_medicamento INT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Dosis VARCHAR(50),
+    Cantidad INT,
+    Precio DECIMAL(10, 2)
+);
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.InsertarNuevoMedicamento (
+    p_nombre IN VARCHAR2,
+    p_dosis IN VARCHAR2,
+    p_cantidad IN INT,
+    p_precio IN DECIMAL
+) AS
+BEGIN
+    INSERT INTO Medicamentos (Nombre, Dosis, Cantidad, Precio)
+    VALUES (p_nombre, p_dosis, p_cantidad, p_precio);
+END InsertarNuevoMedicamento;
+
+
+--Procedimiento almacenado con cursor incluido
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.ObtenerMedicamentosPorNombre (
+    p_nombre IN VARCHAR2,
+    p_dosis IN VARCHAR2,
+    p_cantidad IN INT,
+    p_precio IN DECIMAL
+) AS
+BEGIN
+    -- Mostrar los resultados directamente (puedes realizar otras acciones aquí)
+    FOR medicamento IN (SELECT id_medicamento, Nombre, Dosis, Cantidad, Precio
+                        FROM Medicamentos
+                        WHERE UPPER(Nombre) = UPPER(p_nombre)
+                          AND Dosis = p_dosis
+                          AND Cantidad = p_cantidad
+                          AND Precio = p_precio) 
+    LOOP
+        DBMS_OUTPUT.PUT_LINE('ID: ' || medicamento.id_medicamento || ', Nombre: ' || medicamento.Nombre ||
+                             ', Dosis: ' || medicamento.Dosis || ', Cantidad: ' || medicamento.Cantidad ||
+                             ', Precio: ' || medicamento.Precio);
+    END LOOP;
+
+END ObtenerMedicamentosPorNombre;
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.BorrarMedicamento (
+    p_id_medicamento IN INT
+) AS
+BEGIN
+    -- Realizar la eliminación del medicamento
+    DELETE FROM Medicamentos
+    WHERE id_medicamento = p_id_medicamento;
+
+    -- Comprobar si se eliminó algún registro
+    IF SQL%ROWCOUNT > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('El medicamento con ID ' || p_id_medicamento || ' ha sido eliminado exitosamente.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No se encontró ningún medicamento con el ID ' || p_id_medicamento);
+    END IF;
+END BorrarMedicamento;
+  
