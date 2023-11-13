@@ -8,20 +8,452 @@ GRANT DBA TO C##HospitalExpress;
 --CREACION DE TABLAS
 CREATE TABLE C##HospitalExpress.Usuarios (
     id_usuario INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    username VARCHAR2(255),
+    username VARCHAR2(255) UNIQUE,
     password VARCHAR2(255),
     rol VARCHAR2(25),
     estado VARCHAR2(25)
 );
 
-
-CREATE TABLE C##HospitalExpress.Ejemplo (
-    id_usuario INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    username VARCHAR2(255),
-    password VARCHAR2(255),
-    rol VARCHAR2(25),
-    estado VARCHAR2(25)
+CREATE TABLE C##HospitalExpress.Pacientes (
+    id_paciente INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    nombre VARCHAR2(50) NOT NULL,
+    direccion VARCHAR2(255) NOT NULL,
+    genero VARCHAR2(50) NOT NULL,
+    fecha_nac DATE NOT NULL,
+    id_usuario INTEGER NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
+
+CREATE TABLE C##HospitalExpress.Facturas (
+    id_factura INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    id_paciente INTEGER NOT NULL,
+    total DECIMAL(18,2) NOT NULL,
+    fecha_hora TIMESTAMP NOT NULL,
+    FOREIGN KEY (id_paciente) REFERENCES Pacientes(id_paciente)
+);
+
+--CRUD Usuarios
+--CREATE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_USUARIO (
+    p_username IN VARCHAR2,
+    p_password IN VARCHAR2,
+    p_rol IN VARCHAR2,
+    p_estado IN VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    INSERT INTO
+        usuarios (username, password, rol, estado)
+    VALUES
+        (
+            p_username,
+            p_password,
+            p_rol,
+            p_estado
+        );
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--READ
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO (
+    p_username IN VARCHAR2,
+    p_id_usuario OUT INTEGER,
+    p_rol OUT VARCHAR2,
+    p_estado OUT VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT id_usuario, rol, estado
+    INTO p_id_usuario, p_rol, p_estado
+    FROM usuarios
+    WHERE username = p_username;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Usuario no encontrado';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--UPDATE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_USUARIO (
+    p_username IN VARCHAR2,
+    p_nuevo_password IN VARCHAR2,
+    p_nuevo_rol IN VARCHAR2,
+    p_nuevo_estado IN VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    UPDATE usuarios
+    SET password = p_nuevo_password,
+        rol = p_nuevo_rol,
+        estado = p_nuevo_estado
+    WHERE username = p_username;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Usuario actualizado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Usuario no encontrado para actualizar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--DELETE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_USUARIO (
+    p_username IN VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    DELETE FROM usuarios
+    WHERE username = p_username;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Usuario eliminado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Usuario no encontrado para eliminar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_USUARIO_PACIENTE (
+    p_username IN VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+    v_id_usuario INTEGER;
+    
+    CURSOR c_usuario IS
+        SELECT id_usuario
+        FROM usuarios
+        WHERE username = p_username;
+BEGIN
+    --Se obtiene el Id del Usuario mediante un Cursor
+    OPEN c_usuario;
+    FETCH c_usuario INTO v_id_usuario;
+    CLOSE c_usuario;
+
+    IF v_id_usuario IS NOT NULL THEN
+        DELETE FROM C##HospitalExpress.Pacientes
+        WHERE id_usuario = v_id_usuario;
+
+        DELETE FROM usuarios
+        WHERE username = p_username;
+
+        p_resultado := 'EXITO: Usuario y paciente asociado eliminados exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Usuario no encontrado para eliminar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--CRUD Pacientes
+--CREATE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_PACIENTE (
+    p_nombre IN VARCHAR2,
+    p_direccion IN VARCHAR2,
+    p_genero IN VARCHAR2,
+    p_fecha_nac IN DATE,
+    p_id_usuario IN INTEGER,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    INSERT INTO
+        pacientes (nombre, direccion, genero, fecha_nac, id_usuario)
+    VALUES
+        (
+            p_nombre,
+            p_direccion,
+            p_genero,
+            p_fecha_nac,
+            p_id_usuario
+        );
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--READ
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PACIENTE (
+    p_id_paciente IN VARCHAR2,
+    p_nombre OUT VARCHAR2,
+    p_direccion OUT VARCHAR2,
+    p_genero OUT VARCHAR2,
+    p_fecha_nac OUT VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT nombre, direccion, genero, fecha_nac
+    INTO p_nombre, p_direccion, p_genero, p_fecha_nac
+    FROM pacientes
+    WHERE id_paciente = p_id_paciente;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Paciente no encontrado';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--UPDATE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_PACIENTE (
+    p_id_paciente IN INTEGER,
+    p_nuevo_nombre IN VARCHAR2,
+    p_nuevo_direccion IN VARCHAR2,
+    p_nuevo_genero IN VARCHAR2,
+    p_nuevo_fecha_nac IN DATE,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    UPDATE pacientes
+    SET nombre = p_nuevo_nombre,
+        direccion = p_nuevo_direccion,
+        genero = p_nuevo_genero,
+        fecha_nac = p_nuevo_fecha_nac
+    WHERE id_paciente = p_id_paciente;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Paciente actualizado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Paciente no encontrado para actualizar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--DELETE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_PACIENTE (
+    p_id_paciente IN INTEGER,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+        DELETE FROM C##HospitalExpress.Pacientes
+        WHERE id_paciente = p_id_paciente;
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Paciente eliminado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Paciente no encontrado para eliminar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+DECLARE
+    resultado VARCHAR2(255);
+BEGIN
+    C##HospitalExpress.SP_ELIMINAR_PACIENTE(4, resultado);
+    DBMS_OUTPUT.PUT_LINE(resultado);
+END;
+
+--CRUD Facturas
+--CREATE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_FACTURA (
+    p_id_paciente IN INTEGER,
+    p_total IN DECIMAL,
+    p_fecha_hora IN TIMESTAMP,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    INSERT INTO
+        Facturas (id_paciente, total, fecha_hora)
+    VALUES
+        (
+            p_id_paciente,
+            p_total,
+            p_fecha_hora
+        );
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--READ
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_FACTURA (
+    p_id_factura IN INTEGER,
+    p_id_paciente OUT INTEGER,
+    p_total OUT DECIMAL,
+    p_fecha_hora OUT TIMESTAMP,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT id_paciente, total, fecha_hora
+    INTO p_id_paciente, p_total, p_fecha_hora
+    FROM Facturas
+    WHERE id_factura = p_id_factura;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: La factura ' || p_id_factura || ' no fue encontrada.';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--UPDATE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_FACTURA (
+    p_id_factura IN INTEGER,
+    p_nuevo_total IN DECIMAL,
+    p_nueva_fecha_hora IN TIMESTAMP,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    UPDATE Facturas
+    SET total = p_nuevo_total,
+        fecha_hora = p_nueva_fecha_hora
+    WHERE id_factura = p_id_factura;
+
+    p_resultado := 'Factura Actualizada';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: La factura ' || p_id_factura || ' no fue encontrada en el sistema';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--DELETE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_FACTURA (
+    p_id_factura IN INTEGER,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    DELETE FROM Facturas
+    WHERE id_factura = p_id_factura;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Factura eliminada exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Factura no encontrada para eliminar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_FACTURAS_PACIENTE (
+    p_id_paciente IN INTEGER,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+    CURSOR c_facturas IS
+        SELECT id_factura
+        FROM Facturas
+        WHERE id_paciente = p_id_paciente;
+    v_id_factura INTEGER;
+BEGIN
+    OPEN c_facturas;
+    LOOP
+        FETCH c_facturas INTO v_id_factura;
+        EXIT WHEN c_facturas%NOTFOUND;
+
+        DELETE FROM Facturas
+        WHERE id_factura = v_id_factura;
+    END LOOP;
+    CLOSE c_facturas;
+
+    DELETE FROM Pacientes
+    WHERE id_paciente = p_id_paciente;
+
+    p_resultado := 'Facturas y Paciente eliminados con �xito';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: El paciente con ID ' || p_id_paciente || ' no fue encontrado en el sistema.';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--VISTAS
+CREATE OR REPLACE VIEW C##HospitalExpress.Vista_Usuarios_Pacientes AS
+SELECT
+    U.id_usuario,
+    U.username,
+    U.rol,
+    U.estado,
+    P.id_paciente,
+    P.nombre AS paciente_nombre,
+    P.direccion AS paciente_direccion,
+    P.genero AS paciente_genero,
+    P.fecha_nac AS paciente_fecha_nac
+FROM
+    Usuarios U
+JOIN
+    Pacientes P ON U.id_usuario = P.id_usuario;
+
+CREATE OR REPLACE VIEW Vista_Pacientes_Facturas AS
+SELECT
+    p.id_paciente,
+    p.nombre,
+    f.id_factura,
+    f.total
+FROM
+    Pacientes p
+JOIN
+    Facturas f ON p.id_paciente = f.id_paciente;
+
+--FUNCIONES
+CREATE OR REPLACE FUNCTION C##HospitalExpress.GET_NUMERO_USUARIOS RETURN INTEGER
+AS
+    v_numero_usuarios INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO v_numero_usuarios FROM usuarios;
+    RETURN v_numero_usuarios;
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN -1;
+END;
+
+CREATE OR REPLACE FUNCTION C##HospitalExpress.GET_NUMERO_PACIENTES_MAYORES_60 RETURN INTEGER
+AS
+    v_numero_pacientes INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO v_numero_pacientes
+    FROM C##HospitalExpress.Pacientes
+    WHERE MONTHS_BETWEEN(SYSDATE, fecha_nac) / 12 >= 60;
+    
+    RETURN v_numero_pacientes;
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN -1;
+END;
+
+CREATE OR REPLACE FUNCTION GET_GANANCIONES_TOTALES RETURN DECIMAL
+IS
+    ganancias_totales DECIMAL(18, 2);
+BEGIN
+    SELECT
+        SUM(total)
+    INTO
+        ganancias_totales
+    FROM
+        Facturas;
+
+    RETURN ganancias_totales;
+END;
 
 -------------CITA------------
 --TABLA CITA
