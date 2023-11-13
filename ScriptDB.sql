@@ -150,6 +150,39 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
+--CURSOR CITA
+CREATE OR REPLACE PROCEDURE CONSULTAR_CITA(
+    c_id IN NUMBER
+)
+IS
+    -- Declarar el cursor antes del bloque BEGIN
+    CURSOR cs_cita IS
+        SELECT id_cita, id_doctor, id_paciente, tipo, fecha_hora, estado 
+        FROM C##HospitalExpress.Cita
+        WHERE id_cita = c_id;
+    
+    c_id_cita      C##HospitalExpress.Cita.ID_CITA%TYPE;
+    c_id_doctor    C##HospitalExpress.Cita.ID_DOCTOR%TYPE;
+    c_id_paciente  C##HospitalExpress.Cita.ID_PACIENTE%TYPE;
+    c_tipo         C##HospitalExpress.Cita.TIPO%TYPE;
+    c_fecha_hora   C##HospitalExpress.Cita.FECHA_HORA%TYPE;
+    c_estado       C##HospitalExpress.Cita.ESTADO%TYPE;
+BEGIN
+    -- Utilizar el cursor declarado
+    OPEN cs_cita;
+
+    FETCH cs_cita INTO c_id_cita, c_id_doctor, c_id_paciente, c_tipo, c_fecha_hora, c_estado;
+
+    IF cs_cita%FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('ID_CITA: ' || TO_CHAR(c_id_cita) || ', ID_DOCTOR: ' || TO_CHAR(c_id_doctor) 
+        || ', ID_PACIENTE: ' || TO_CHAR(c_id_paciente) || ', TIPO: ' || c_tipo 
+        || ', FECHA_HORA: ' || TO_CHAR(c_fecha_hora) || ', ESTADO: ' || c_estado);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('La cita: ' || TO_CHAR(c_id) || ' no fue encontrada.');
+    END IF;
+    CLOSE cs_cita;
+END CONSULTAR_CITA;
+
 --Vista Cita
 CREATE OR REPLACE VIEW Vista_Cita AS
 SELECT
