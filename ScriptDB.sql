@@ -148,3 +148,151 @@ EXCEPTION
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
+
+--DOCTORES 
+--CRUD
+
+CREATE TABLE C##HospitalExpress.Doctor(
+
+    id_doctor INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre VARCHAR2(250),
+    direccion VARCHAR(250),
+    telefono VARCHAR(250),
+    estado VARCHAR2(25)
+);
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_DOCTOR (
+    d_nombre IN VARCHAR2,
+    d_direccion IN VARCHAR2,
+    d_telefono IN VARCHAR2,
+    d_estado IN VARCHAR2
+) AS
+BEGIN
+    INSERT INTO Doctor (nombre, direccion, telefono, estado)
+    VALUES (d_nombre, d_direccion, d_telefono, d_estado);
+END ;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_DOCTOR (
+    d_id IN NUMBER,
+    d_nombre IN VARCHAR2,
+    d_direccion IN VARCHAR2,
+    d_telefono IN VARCHAR2,
+    d_estado IN VARCHAR2
+) AS
+BEGIN
+    UPDATE Doctor
+    SET nombre = d_nombre,
+        direccion = d_direccion,
+        telefono = d_telefono,
+        estado = d_estado
+    WHERE id_doctor = d_id;
+END;
+
+BEGIN
+    C##HospitalExpress.SP_ACTUALIZAR_DOCTOR(d_id => 2, d_nombre => 'Mario', 
+    d_direccion => 'Cartago', d_telefono => '6921-9025', d_estado => 'Inactivo');
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_DOCTOR (
+    d_id IN NUMBER
+) AS
+BEGIN
+    DELETE FROM Doctor WHERE id_doctor = d_id;
+    COMMIT;
+END;
+
+--STORED PROCEDURES DE DOCTORES
+CREATE OR REPLACE PROCEDURE SP_OBTENER_DOCTORES_ESTADO (
+    d_estado_doctor IN VARCHAR2
+) AS
+    d_id NUMBER;
+    d_nombre VARCHAR2(50);
+    d_estado VARCHAR2(10);
+
+    CURSOR c_doctores IS
+        SELECT ID_DOCTOR, NOMBRE, ESTADO FROM C##HospitalExpress.Doctor
+        WHERE estado = d_estado_doctor;
+BEGIN
+    OPEN c_doctores;
+    
+    LOOP 
+    FETCH c_doctores INTO d_id, d_nombre, d_estado;
+    EXIT WHEN c_doctores%NOTFOUND;
+    
+    DBMS_OUTPUT.PUT_LINE('ID: ' || d_id || ' Nombre' || d_nombre ||
+    ' Estado: '|| d_estado);
+    END LOOP;
+    CLOSE c_doctores;
+END;
+
+CREATE OR REPLACE PROCEDURE SP_INCREMENTAR_PACIENTES_ATENDIDOS (
+    d_id IN NUMBER,
+    d_cantidad IN NUMBER
+) AS
+BEGIN
+    UPDATE doctores
+    SET pacientes_atendidos = pacientes_atendidos + d_cantidad
+    WHERE id_doctor = d_id;
+    COMMIT;
+END;
+
+CREATE OR REPLACE PROCEDURE SP_CAMBIAR_ESTADO_DOCTOR (
+    d_id IN NUMBER,
+    d_nuevo_estado IN VARCHAR2
+) AS
+BEGIN
+    UPDATE C##HospitalExpress.Doctor
+    SET estado = d_nuevo_estado
+    WHERE id_doctor = d_id;
+    COMMIT;
+END;
+
+CREATE OR REPLACE PROCEDURE SP_OBTENER_CANTIDAD_DOCTORES_POR_ESTADO (
+    d_estado IN VARCHAR2,
+    d_cantidad OUT NUMBER
+) AS
+BEGIN
+    SELECT COUNT(*) INTO d_cantidad
+    FROM C##HospitalExpress.Doctor
+    WHERE estado = d_estado;
+END;
+
+--CURSOR DE DOCTORES
+CREATE OR REPLACE PROCEDURE SP_OBTENER_DOCTOR_POR_ID(
+    d_id IN NUMBER
+)
+IS
+    d_id_doctor NUMBER;
+    d_nombre VARCHAR2(50);
+    d_telefono VARCHAR2(55);
+    d_estado VARCHAR2(50);
+
+    -- Declarar el cursor
+    CURSOR cursor_Doctor IS
+        SELECT id_doctor, nombre, telefono, estado 
+        FROM C##HospitalExpress.Doctor
+        WHERE id_doctor = d_id;
+BEGIN
+    OPEN cursor_Doctor;
+
+    FETCH cursor_Doctor INTO d_id_doctor, d_nombre, d_telefono, d_estado;
+
+    IF cursor_Doctor%FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('ID: ' || TO_CHAR(d_id_doctor) || ', Nombre: ' || d_nombre 
+        || ', Telefono: ' || d_telefono || ', Estado: ' || d_estado);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No se encontró el doctor con el ID: ' || TO_CHAR(d_id));
+    END IF;
+    CLOSE cursor_Doctor;
+END;
+    
+--VIWE DE DOCTORES
+CREATE OR REPLACE VIEW Vista_Doctores AS
+SELECT
+    id_doctor,
+    nombre,
+    direccion,
+    telefono,
+    estado
+FROM
+    doctor;
