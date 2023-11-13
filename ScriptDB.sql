@@ -23,6 +23,7 @@ CREATE TABLE C##HospitalExpress.Ejemplo (
     estado VARCHAR2(25)
 );
 
+-------------CITA------------
 --TABLA CITA
 CREATE TABLE C##HospitalExpress.Cita (
     id_cita INTEGER PRIMARY KEY,
@@ -148,6 +149,18 @@ EXCEPTION
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
+
+--Vista Cita
+CREATE OR REPLACE VIEW Vista_Cita AS
+SELECT
+    id_cita,
+    id_doctor,
+    id_paciente,
+    tipo,
+    fecha_hora,
+    estado
+FROM
+    Cita;
 
 --DOCTORES 
 --CRUD
