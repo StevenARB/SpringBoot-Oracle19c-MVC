@@ -371,7 +371,7 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.ObtenerMedicamentosPorNombre (
     p_precio IN DECIMAL
 ) AS
 BEGIN
-    -- Mostrar los resultados directamente (puedes realizar otras acciones aquí)
+    -- Mostrar los resultados directamente (puedes realizar otras acciones aquï¿½)
     FOR medicamento IN (SELECT id_medicamento, Nombre, Dosis, Cantidad, Precio
                         FROM Medicamentos
                         WHERE UPPER(Nombre) = UPPER(p_nombre)
@@ -391,15 +391,157 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.BorrarMedicamento (
     p_id_medicamento IN INT
 ) AS
 BEGIN
-    -- Realizar la eliminación del medicamento
+    -- Realizar la eliminaciï¿½n del medicamento
     DELETE FROM Medicamentos
     WHERE id_medicamento = p_id_medicamento;
 
-    -- Comprobar si se eliminó algún registro
+    -- Comprobar si se eliminï¿½ algï¿½n registro
     IF SQL%ROWCOUNT > 0 THEN
         DBMS_OUTPUT.PUT_LINE('El medicamento con ID ' || p_id_medicamento || ' ha sido eliminado exitosamente.');
     ELSE
-        DBMS_OUTPUT.PUT_LINE('No se encontró ningún medicamento con el ID ' || p_id_medicamento);
+        DBMS_OUTPUT.PUT_LINE('No se encontrï¿½ ningï¿½n medicamento con el ID ' || p_id_medicamento);
     END IF;
 END BorrarMedicamento;
   
+--PRODUCTOS 
+--FALTA AGREGAR LA PARTE DE INVENTARIO: ID y FOREING KEY
+ CREATE TABLE C##HospitalExpress.Productos (
+    id_producto INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Descripcion VARCHAR(255),
+    Cantidad INT,
+    Precio DECIMAL(10, 2)
+);
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_PRODUCTOS (
+    p_nombre  VARCHAR2,
+    p_descripcion  VARCHAR2,
+    p_cantidad  NUMBER,
+    p_precio  DECIMAL
+)
+AS
+BEGIN
+    INSERT INTO Productos ( Nombre, Descripcion, Cantidad, Precio)
+    VALUES (p_nombre, p_descripcion, p_cantidad, p_precio);
+    COMMIT;
+END;
+BEGIN 
+    C##HospitalExpress.SP_INSERTAR_PRODUCTOS(
+    'Fluoxeritan', 'Antidepresivo', 300, 19.99);
+END;
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_PRODCUTOS (
+    p_id_producto IN NUMBER,
+    p_nombre IN VARCHAR2,
+    p_descripcion IN VARCHAR2,
+    p_cantidad IN NUMBER,
+    p_precio IN DECIMAL
+)
+AS
+BEGIN
+    UPDATE Productos
+    SET Nombre = p_nombre,
+        Descripcion = p_descripcion,
+        Cantidad = p_cantidad,
+        Precio = p_precio
+    WHERE id_producto = p_id_producto;
+    COMMIT;
+END;
+
+BEGIN
+    C##HospitalExpress.SP_ACTUALIZAR_PRODCUTOS(
+    p_id_producto => 1,
+    p_nombre => 'LOL',
+        p_descripcion => 'LOL',
+        p_cantidad => 50,
+        p_precio => 39.99
+    );
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_PRODUCTOS (
+    p_id_producto IN NUMBER
+)
+AS
+BEGIN
+    DELETE FROM Productos WHERE id_producto = p_id_producto;
+    COMMIT;
+END;
+
+
+--CURSOR
+CREATE OR REPLACE PROCEDURE SP_Obtener_Productos_Precio (
+    p_precio_maximo IN DECIMAL
+)
+AS
+    p_id_producto Productos.id_producto%TYPE;
+    p_nombre VARCHAR2(100);
+    p_descripcion VARCHAR2(255);
+    p_cantidad NUMBER;
+    p_precio Productos.Precio%TYPE;
+
+    CURSOR cursorProductos IS
+        SELECT id_producto, Nombre, Descripcion, Cantidad, Precio
+        FROM Productos
+        WHERE Precio <= p_precio_maximo;
+
+BEGIN
+    OPEN cursorProductos;
+    DBMS_OUTPUT.PUT_LINE('Productos con precio menor o igual a ' || TO_CHAR(p_precio_maximo) || ':');
+    LOOP
+        FETCH cursorProductos INTO p_id_producto, p_nombre, p_descripcion, p_cantidad, p_precio;
+        EXIT WHEN cursorProductos%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE('ID: ' || TO_CHAR(p_id_producto) || ', Nombre: ' || p_nombre ||
+                             ', DescripciÃ³n: ' || p_descripcion || ', Cantidad: ' || TO_CHAR(p_cantidad) ||
+                             ', Precio: ' || TO_CHAR(p_precio));
+    END LOOP;
+
+    CLOSE cursorProductos;
+
+END;
+
+
+--STORED PROCEDURE
+CREATE OR REPLACE PROCEDURE SP_Buscar_Productos_Nombre(
+    p_nombre_in IN productos.nombre%TYPE
+)
+IS
+    p_id_producto NUMBER;
+    p_nombre_producto VARCHAR2(255);
+    p_descripcion VARCHAR2(255);
+    p_cantidad NUMBER;
+    p_precio productos.precio%TYPE;
+
+    CURSOR cursorProductos IS
+        SELECT id_producto, nombre, descripcion, cantidad, precio
+        FROM productos
+        WHERE LOWER(nombre) LIKE '%' || LOWER(p_nombre_in) || '%';
+
+BEGIN
+    OPEN cursorProductos;
+
+    DBMS_OUTPUT.PUT_LINE('Productos con nombres que contienen "' || p_nombre_in || '":');
+    LOOP
+        FETCH cursorProductos INTO p_id_producto, p_nombre_producto, p_descripcion, p_cantidad, p_precio;
+        EXIT WHEN cursorProductos%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE('ID: ' || TO_CHAR(p_id_producto) || ', Nombre: ' || p_nombre_producto ||
+                             ', DescripciÃ³n: ' || p_descripcion || ', Cantidad: ' || TO_CHAR(p_cantidad) ||
+                             ', Precio: ' || TO_CHAR(p_precio));
+    END LOOP;
+    CLOSE cursorProductos;
+END;
+
+
+--VISTA DE PROCUTOS
+CREATE OR REPLACE VIEW VISTAS_PRODUCTOS 
+AS
+SELECT 
+    id_producto,
+    nombre,
+    descripcion,
+    cantidad,
+    precio
+FROM
+    PRODUCTOS;
