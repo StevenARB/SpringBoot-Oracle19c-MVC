@@ -463,7 +463,8 @@ CREATE TABLE C##HospitalExpress.Cita (
     id_paciente INTEGER,
     tipo VARCHAR(100),
     fecha_hora DATE,
-    estado VARCHAR(100)
+    estado VARCHAR(100),
+    FOREIGN KEY (id_doctor) REFERENCES C##HospitalExpress.Doctor(id_doctor)
 );
 
 --CREACION DE PROCEDIMIENTOS
@@ -540,6 +541,8 @@ EXCEPTION
         p_resultado := 'ERROR: La cita ' || p_id_cita || ' no fue encontrada en el sistema.';
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
 
 --PROCEDIMIENTO ALMACENADO DE CITA READ
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_CITA (
@@ -990,4 +993,64 @@ BEGIN
         WHERE TRUNC(MONTHS_BETWEEN(SYSDATE, FECHA_NACIMIENTO) / 12) >=30;
         
     RETURN d_cursor;
+END;
+
+CREATE TABLE Inventario (
+    id_inventario INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre VARCHAR2(150),
+    descripcion VARCHAR2(255),
+    cantidad INT,
+    id_producto INT,
+    FOREIGN KEY (id_producto) REFERENCES C##HospitalExpress.Productos(id_producto)
+);
+
+CREATE TABLE Especialidades(
+    id_especialidad INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre VARCHAR2(100),
+    descripcion VARCHAR2(255)
+);
+
+CREATE TABLE doctores_especialidades (
+    id_doctor INTEGER,
+    id_especialidad INTEGER,
+    PRIMARY KEY (id_doctor, id_especialidad),
+    FOREIGN KEY (id_doctor) REFERENCES C##HospitalExpress.Doctor(id_doctor),
+    FOREIGN KEY (id_especialidad) REFERENCES Especialidades(id_especialidad)
+);
+
+--VISTA DE INVENTARIO Y PRODUCTO
+CREATE VIEW Vista_Productos_Inventario AS
+SELECT 
+    P.ID_PRODUCTO,
+    P.NOMBRE AS NOMBRE_PRODUCTO,
+    P.DESCRIPCION AS DESCRIPCION_PRODUCTO,
+    P.CANTIDAD AS CANTIDAD_PRODUCTO,
+    P.PRECIO,
+    I.ID_INVENTARIO,
+    I.CANTIDAD AS CANTIDAD_INVENTARIO
+FROM PRODUCTOS P
+JOIN INVENTARIO I ON P.ID_PRODUCTO = I.ID_PRODUCTO;
+
+--SE AGREGO LA FK DE INVNETARIO A PRODUCTOS
+ALTER TABLE PRODUCTOS
+ADD id_inventario INT;
+
+ALTER TABLE PRODUCTOS
+ADD CONSTRAINT FK_PRODUCTOS_INVENTARIO
+FOREIGN KEY (id_inventario) REFERENCES Inventario (id_inventario);
+
+
+--FUNCION DE ESPECIALIDADES
+
+CREATE OR REPLACE FUNCTION FN_CONTAR_DOCTORES_ESPECIALIDAD(
+    d_id_especialidad INT
+) RETURN INT AS 
+    v_cantidad INT;
+BEGIN
+    SELECT COUNT(*)
+    INTO v_cantidad
+    FROM doctores_especialidades
+    WHERE id_especialidad = d_id_especialidad;
+    
+    RETURN v_cantidad;
 END;
