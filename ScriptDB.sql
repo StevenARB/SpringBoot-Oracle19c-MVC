@@ -63,8 +63,7 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO (
     p_username IN VARCHAR2,
     p_id_usuario OUT INTEGER,
     p_rol OUT VARCHAR2,
-    p_estado OUT VARCHAR2,
-    p_resultado OUT VARCHAR2
+    p_estado OUT VARCHAR2
 ) 
 AS 
 BEGIN
@@ -72,13 +71,6 @@ BEGIN
     INTO p_id_usuario, p_rol, p_estado
     FROM usuarios
     WHERE username = p_username;
-
-    p_resultado := 'EXITO';
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        p_resultado := 'ERROR: Usuario no encontrado';
-    WHEN OTHERS THEN
-        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
 --UPDATE

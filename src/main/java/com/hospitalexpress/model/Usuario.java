@@ -4,61 +4,45 @@
  */
 package com.hospitalexpress.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedStoredProcedureQuery;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureParameter;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
  * @author retan
  */
 @Entity
-@Table(name = "usuarios", schema = "hospitalexpress")
+@Table(name = "usuarios")
+@Getter
+@Setter
+@NamedStoredProcedureQuery(name = "Usuario.getUsuarioByUsername", procedureName = "SP_CONSULTAR_USUARIO", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_id_usuario", type = Integer.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_rol", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_estado", type = String.class)})
 public class Usuario {
 
     @Id
-    private Integer id_usuario;
+    @Column(name = "id_usuario")
+    private Integer id;
 
-    private String username, password, rol, estado;
+    @Column(name = "username")
+    private String username;
 
-    public Integer getId_usuario() {
-        return id_usuario;
-    }
+    @Column(name = "password")
+    private String password;
 
-    public void setId_usuario(Integer id_usuario) {
-        this.id_usuario = id_usuario;
-    }
+    @Column(name = "rol")
+    private String rol;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRol() {
-        return rol;
-    }
-
-    public void setRol(String rol) {
-        this.rol = rol;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
+    @Column(name = "estado")
+    private String estado;
 
 }
