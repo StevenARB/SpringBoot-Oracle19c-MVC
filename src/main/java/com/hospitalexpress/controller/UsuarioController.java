@@ -24,9 +24,12 @@ public class UsuarioController {
 
     @GetMapping("/findUsuarioByUsername/{username}")
     public String findUsuarioByUsername(Model model, @PathVariable String username) {
-        Usuario usuario = usuarioService.getUsuarioByUsername(username);
-
-        model.addAttribute("usuario", usuario);
+        try {
+            Usuario usuario = usuarioService.getUsuarioByUsername(username);
+            model.addAttribute("usuario", usuario);
+        } catch (Exception e) {
+            model.addAttribute("usuarioNoEncontrado", true);
+        }
         return "usuario";
     }
 

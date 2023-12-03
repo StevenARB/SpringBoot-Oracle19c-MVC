@@ -6,11 +6,9 @@ package com.hospitalexpress.service;
 
 import com.hospitalexpress.model.Usuario;
 import com.hospitalexpress.repository.UsuarioRepository;
-import jakarta.persistence.StoredProcedureQuery;
-import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -23,6 +21,28 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     public Usuario getUsuarioByUsername(String username) {
-        return usuarioRepository.getUsuarioByUsername(username);
+        
+        Map<String, Object> result = usuarioRepository.getUsuarioByUsername(username);
+
+        try {
+            
+            if (result != null && !result.isEmpty()) {
+                Usuario usuario = new Usuario();
+                usuario.setUsername((String) username);
+                usuario.setId((Integer) result.get("p_id_usuario"));
+                usuario.setRol((String) result.get("p_rol"));
+                usuario.setEstado((String) result.get("p_estado"));
+
+                System.out.println(usuario.getId());
+
+                return usuario;
+            } else {
+                return null;
+            }
+            
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 }

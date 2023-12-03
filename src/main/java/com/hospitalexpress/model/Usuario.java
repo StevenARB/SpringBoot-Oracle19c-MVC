@@ -8,7 +8,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
-import jakarta.persistence.NamedStoredProcedureQueries;
 import jakarta.persistence.NamedStoredProcedureQuery;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureParameter;
@@ -23,7 +22,7 @@ import lombok.Setter;
 @Table(name = "usuarios")
 @Getter
 @Setter
-@NamedStoredProcedureQuery(name = "firstProcedure", procedureName = "SP_CONSULTAR_USUARIO", parameters = {
+@NamedStoredProcedureQuery(name = "Usuario.getUsuarioByUsername", procedureName = "SP_CONSULTAR_USUARIO", parameters = {
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_id_usuario", type = Integer.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_rol", type = String.class),
