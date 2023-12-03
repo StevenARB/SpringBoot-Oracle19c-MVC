@@ -22,16 +22,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public String insertarUsuario(String username, String password, String rol, String estado) {
-        try {
-            return usuarioRepository.insertarUsuario(username, password, rol, estado);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "ERROR: " + e.getMessage();
-        }
-    }
-
-    public List<Usuario> getAll() {
-        return usuarioRepository.findAll();
+    public Usuario getUsuarioByUsername(String username) {
+        return usuarioRepository.getUsuarioByUsername(username);
     }
 }

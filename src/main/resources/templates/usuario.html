@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Detalles del Usuario</title>
+    </head>
+    <body>
+
+        <h1>Detalles del Usuario</h1>
+
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Rol</th>
+                <th>Estado</th>
+            </tr>
+            <tr th:object="${usuario}">
+                <td th:if="${usuario != null}" th:text="${usuario.id}"></td>
+                <td th:if="${usuario == null}">Usuario no encontrado</td>
+                <td th:if="${usuario != null}" th:text="*{usuario.username}"></td>
+                <td th:if="${usuario != null}" th:text="*{usuario.password}"></td>
+                <td th:if="${usuario != null}" th:text="*{usuario.rol}"></td>
+                <td th:if="${usuario != null}" th:text="*{usuario.estado}"></td>
+            </tr>
+        </table>
+
+    </body>
+</html>

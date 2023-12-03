@@ -6,21 +6,15 @@ package com.hospitalexpress.repository;
 
 import com.hospitalexpress.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.query.Procedure;
-import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author retan
  */
+@Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-
-    // Consultas personalizadas si es necesario
-    @Procedure(name = "SP_INSERTAR_USUARIO")
-    String insertarUsuario(
-            @Param("p_username") String username,
-            @Param("p_password") String password,
-            @Param("p_rol") String rol,
-            @Param("p_estado") String estado
-    );
+    
+    public Usuario getUsuarioByUsername(String username);
+    
 }
