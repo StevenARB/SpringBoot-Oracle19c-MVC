@@ -1,72 +1,51 @@
 package com.hospitalexpress.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.NamedStoredProcedureQuery;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureParameter;
 import jakarta.persistence.Table;
-import java.sql.Date;
+import lombok.Getter;
+import lombok.Setter;
 
 
 @Entity
 @Table(name = "pacientes", schema = "hospitalexpress")
+@Getter
+@Setter
+@NamedStoredProcedureQuery(name = "Doctor.getDoctorByNombre", procedureName = "SP_CONSULTAR_DOCTOR", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_nombre", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_id_doctor", type = Integer.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_direccion", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_telefono", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_estado", type = String.class)})
+
+@NamedStoredProcedureQuery(name = "Doctor.insertDoctor", procedureName = "SP_INSERTAR_DOCTOR", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_direccion", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_telefono", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_estado", type = String.class)
+})
+
 public class Doctor {
 
     @Id
-    private Integer id_doctor;
+    @Column(name = "id_doctor")
+    private Integer id;
 
-    private String nombre, direccion, telefono, estado;
+    @Column(name = "nombre")
+    private String nombre;
 
-    @OneToOne
-    @JoinColumn(name = "id_doctor")
-    private Doctor doctor;
+    @Column(name = "direccion")
+    private String direccion;
 
-    public Integer getId_doctor() {
-        return id_doctor;
-    }
+    @Column(name = "telefono")
+    private String telefono;
 
-    public void setId_doctor(Integer id_doctor) {
-        this.id_doctor = id_doctor;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public Doctor getDoctor() {
-        return doctor;
-    }
-
-    public void setDoctor(Doctor doctor) {
-        this.doctor = doctor;
-    }
-
+    @Column(name = "estado")
+    private String estado;
 }
