@@ -1,0 +1,57 @@
+<!--<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Detalles del Producto</title>
+    </head>
+    <body>
+
+        <h1>Detalles del Producto</h1>
+
+        <table th:if="${producto != null}" border="1">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+            </tr>
+            <tr>
+                <td th:text="${producto.idProducto}"></td>
+                <td th:if="${producto == null}">Producto no encontrado</td>
+                <td th:text="${producto.nombre}"></td>
+                <td th:text="${producto.descripcion}"></td>
+                <td th:text="${producto.cantidad}"></td>
+                <td th:text="${producto.precio}"></td>
+            </tr>
+        </table>
+        
+        <h1 th:if="${productoNoEncontrado}">Producto no Encontrado</h1>
+
+    </body>
+</html>-->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Detalles e Inserción de Producto</title>
+</head>
+<body>
+
+    <!-- Sección de Detalles del Producto -->
+    <h1>Detalles del Producto</h1>
+    <table th:if="${producto != null}" border="1">
+        <!-- Detalles del producto aquí... -->
+    </table>
+    <h1 th:if="${productoNoEncontrado}">Producto no Encontrado</h1>
+
+    <!-- Sección de Inserción de Nuevo Producto -->
+    <h1>Insertar Nuevo Producto</h1>
+    <form action="/InsertarProducto" method="post">
+        <!-- Formulario de inserción aquí... -->
+    </form>
+
+</body>
+</html>
