@@ -14,21 +14,22 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "pacientes", schema = "hospitalexpress")
+@Table(name = "Doctor", schema = "hospitalexpress")
 @Getter
 @Setter
-@NamedStoredProcedureQuery(name = "Doctor.getDoctorByNombre", procedureName = "SP_CONSULTAR_DOCTOR", parameters = {
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_nombre", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_id_doctor", type = Integer.class),
+@NamedStoredProcedureQuery(name = "Doctor.getDoctorById", procedureName = "SP_CONSULTAR_DOCTOR", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_id_doctor", type = Integer.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_nombre", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_direccion", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_telefono", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_estado", type = String.class)})
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_estado", type = String.class),
+ @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_resultado", type = String.class)})
 
 @NamedStoredProcedureQuery(name = "Doctor.insertDoctor", procedureName = "SP_INSERTAR_DOCTOR", parameters = {
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_direccion", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_telefono", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_estado", type = String.class)
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_nombre", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_direccion", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_telefono", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_estado", type = String.class)
 })
 
 public class Doctor {

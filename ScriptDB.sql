@@ -872,7 +872,7 @@ END;
 
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PRODUCTOS(
     p_id_producto IN INT,
-    p_nombre IN VARCHAR2,
+    p_nombre OUT VARCHAR2,
     p_descripcion OUT VARCHAR2,
     p_cantidad OUT VARCHAR2,
     p_precio OUT VARCHAR2,
@@ -885,7 +885,7 @@ BEGIN
     FROM Productos
     WHERE id_producto = p_id_producto;
 
-    d_resultado := 'EXITO';
+    p_resultado := 'EXITO';
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         p_resultado := 'ERROR: Producto no encontrado';
@@ -1051,7 +1051,7 @@ BEGIN
         WHERE id_producto = p_id_producto;
 
         IF i_producto_existente = 0 THEN
-            d_resultado := 'ERROR: El producto no existe.';
+            p_resultado := 'ERROR: El producto no existe.';
             RETURN;
         END IF;
     END;
@@ -1265,7 +1265,7 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_DOCTOR_ESPECIALIDAD 
 AS 
 BEGIN
     SELECT 1
-    INTO d_resultado
+    INTO p_resultado
     FROM doctores_especialidades
     WHERE id_doctor = p_id_doctor AND id_especialidad = p_id_especialidad;
 
