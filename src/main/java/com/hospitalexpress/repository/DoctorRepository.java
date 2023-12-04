@@ -13,8 +13,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Long>{
        
-    @Procedure(name = "Doctor.getDoctorByNombre")
-    Map<String, Object> getDoctorByNombre(@Param("d_nombre") String nombre);
+    @Procedure(name = "Doctor.getDoctorById")
+    Map<String, Object> getDoctorById(@Param("d_id_doctor") Integer id_doctor);
 
     
 

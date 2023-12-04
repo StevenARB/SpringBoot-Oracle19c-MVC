@@ -15,10 +15,10 @@ public class DoctorController {
     @Autowired
     private DoctorService doctorService;
 
-    @GetMapping("/findDoctorByNombre/{nombre}")
-    public String findDoctorByNombre(Model model, @PathVariable String nombre) {
+    @GetMapping("/findDoctorById/{id_doctor}")
+    public String findDoctorById(Model model, @PathVariable Integer id_doctor) {
         try {
-            Doctor doctor = doctorService.getDoctorByNombre(nombre);
+            Doctor doctor = doctorService.getDoctorById(id_doctor);
             model.addAttribute("doctor", doctor);
         } catch (Exception e) {
             model.addAttribute("doctorNoEncontrado", true);
