@@ -852,18 +852,22 @@ END BorrarMedicamento;
     Cantidad INT,
     Precio DECIMAL(10, 2)
 );
-
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_PRODUCTOS (
-    p_nombre  VARCHAR2,
-    p_descripcion  VARCHAR2,
-    p_cantidad  NUMBER,
-    p_precio  DECIMAL
+    p_nombre IN VARCHAR2,
+    p_descripcion IN VARCHAR2,
+    p_cantidad IN NUMBER,
+    p_precio IN DECIMAL,
+    p_resultado OUT VARCHAR2
 )
 AS
 BEGIN
     INSERT INTO Productos ( Nombre, Descripcion, Cantidad, Precio)
     VALUES (p_nombre, p_descripcion, p_cantidad, p_precio);
-    COMMIT;
+ 
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 BEGIN 
     C##HospitalExpress.SP_INSERTAR_PRODUCTOS(
@@ -892,13 +896,13 @@ EXCEPTION
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
-
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_PRODCUTOS (
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_PRODUCTOS (
     p_id_producto IN INT,
     p_nombre IN VARCHAR2,
     p_descripcion IN VARCHAR2,
     p_cantidad IN INT,
-    p_precio IN DECIMAL
+    p_precio IN DECIMAL,
+    p_resultado OUT VARCHAR2
 )
 AS
 BEGIN
@@ -908,17 +912,35 @@ BEGIN
         Cantidad = p_cantidad,
         Precio = p_precio
     WHERE id_producto = p_id_producto;
-    COMMIT;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Producto actualizado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Producto no encontrado para actualizar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
 
+
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_PRODUCTOS (
-    p_id_producto IN INT
+    p_id_producto IN INT,
+    p_resultado OUT VARCHAR2
 )
 AS
 BEGIN
     DELETE FROM Productos WHERE id_producto = p_id_producto;
-    COMMIT;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Producto eliminado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Producto no encontrado para eliminar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
 
@@ -1200,14 +1222,13 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_ESPECIALIDAD (
 )
 AS
 BEGIN
-    -- Actualizar en especialidades
     UPDATE Especialidades
     SET nombre = p_nombre,
         descripcion = p_descripcion
     WHERE id_especialidad = p_id_especialidad;
     
     COMMIT;
-    p_resultado := 'EXITO';
+    p_resultado := 'EXITO: Especialidad actualizada exitosamente';
 EXCEPTION
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
@@ -1223,12 +1244,11 @@ BEGIN
     DELETE FROM Especialidades WHERE id_especialidad = p_id_especialidad;
     
     COMMIT;
-    p_resultado := 'EXITO';
+    p_resultado := 'EXITO: Especialidad eliminada exitosamente';
 EXCEPTION
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
-
 
 CREATE TABLE doctores_especialidades (
     id_doctor INTEGER,
@@ -1284,12 +1304,11 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_DOCTOR_ESPECIALIDAD (
 )
 AS
 BEGIN
-    -- Eliminar de doctores_especialidades
     DELETE FROM doctores_especialidades
     WHERE id_doctor = p_id_doctor AND id_especialidad = p_id_especialidad;
     
     COMMIT;
-    p_resultado := 'EXITO';
+    p_resultado := 'EXITO: Doctor-Especialidad eliminada exitosamente';
 EXCEPTION
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
