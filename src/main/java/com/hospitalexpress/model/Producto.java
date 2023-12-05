@@ -38,7 +38,8 @@ import lombok.Setter;
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_descripcion", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_cantidad", type = Integer.class),
-        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_precio", type = BigDecimal.class)
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_precio", type = BigDecimal.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
     }
 )
 

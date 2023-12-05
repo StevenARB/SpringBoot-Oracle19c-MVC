@@ -19,7 +19,6 @@ public class DoctorController {
         try {
             if (doctorService.getDoctorById(id_doctor) != null) {
                 Doctor doctor = doctorService.getDoctorById(id_doctor);
-                System.out.println(doctor);
                 model.addAttribute("doctor", doctor);
             } else {
                 model.addAttribute("doctorNoEncontrado", true);
@@ -27,6 +26,6 @@ public class DoctorController {
         } catch (Exception e) {
             model.addAttribute("doctorNoEncontrado", true);
         }
-        return "doctor";
+        return "doctor/doctor"; 
     }
 }

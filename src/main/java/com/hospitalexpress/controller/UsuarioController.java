@@ -30,7 +30,7 @@ public class UsuarioController {
         } catch (Exception e) {
             model.addAttribute("usuarioNoEncontrado", true);
         }
-        return "usuario";
+        return "usuarios";
     }
 
 }
