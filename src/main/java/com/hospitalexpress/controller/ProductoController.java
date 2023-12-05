@@ -25,7 +25,7 @@ public class ProductoController {
         } catch (Exception e) {
             model.addAttribute("productoNoEncontrado", true);
         }
-        return "producto";
+        return "producto/producto";
     }
     
     @PostMapping("/InsertarProducto")
@@ -36,7 +36,7 @@ public class ProductoController {
         @RequestParam BigDecimal precio
     ) {
         productoService.InsertarProducto(nombre, descripcion, cantidad, precio);
-        return "redirect:/listaProductos"; // Redirige a la página de lista de productos u otra página según tu lógica.
+        return "redirect:/listaProductos";
     }
 
 }

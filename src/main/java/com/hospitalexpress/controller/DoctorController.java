@@ -26,6 +26,6 @@ public class DoctorController {
         } catch (Exception e) {
             model.addAttribute("doctorNoEncontrado", true);
         }
-        return "doctor";
+        return "doctor/doctor"; 
     }
 }

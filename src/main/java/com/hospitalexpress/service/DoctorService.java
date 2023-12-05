@@ -24,7 +24,6 @@ public class DoctorService {
                 doctor.setDireccion((String) result.get("d_direccion"));
                 doctor.setTelefono((String) result.get("d_telefono"));
                 doctor.setEstado((String) result.get("d_estado"));
-
                 return doctor;
             } else {
                 return null;
