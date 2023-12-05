@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Detalles de la Especialidad</title>
+</head>
+<body>
+
+    <h1>Detalles de la Especialidad</h1>
+
+    <table th:if="${especialidad != null}" border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+        </tr>
+        <tr>
+            <td th:text="${especialidad.id}"></td>
+            <td th:if="${especialidad == null}">Especialidad no encontrada</td>
+            <td th:text="${especialidad.nombre}"></td>
+            <td th:text="${especialidad.descripcion}"></td>
+        </tr>
+    </table>
+
+    <h1 th:if="${especialidadNoEncontrada}">Especialidad no Encontrada</h1>
+
+</body>
+</html>

@@ -26,7 +26,7 @@ public class DoctorService {
                 doctor.setEstado((String) result.get("d_estado"));
 
                 System.out.println(doctor.getId());
-
+                
                 return doctor;
             } else {
                 return null;
