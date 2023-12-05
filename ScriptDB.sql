@@ -161,7 +161,7 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_PACIENTE (
     p_fecha_nac IN DATE,
     p_id_usuario IN INTEGER,
     p_resultado OUT VARCHAR2
-) 
+)
 AS 
 BEGIN
     INSERT INTO
