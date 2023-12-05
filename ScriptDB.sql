@@ -633,24 +633,31 @@ CREATE TABLE C##HospitalExpress.Doctor(
     telefono VARCHAR(250),
     estado VARCHAR2(25)
 );
-
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_DOCTOR (
     d_nombre IN VARCHAR2,
     d_direccion IN VARCHAR2,
     d_telefono IN VARCHAR2,
-    d_estado IN VARCHAR2
+    d_estado IN VARCHAR2,
+    d_resultado OUT VARCHAR2
 ) AS
 BEGIN
     INSERT INTO Doctor (nombre, direccion, telefono, estado)
     VALUES (d_nombre, d_direccion, d_telefono, d_estado);
-END ;
+
+    d_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        d_resultado := 'ERROR: ' || SQLERRM;
+END;
+
 
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_DOCTOR (
     d_id IN INT,
     d_nombre IN VARCHAR2,
     d_direccion IN VARCHAR2,
     d_telefono IN VARCHAR2,
-    d_estado IN VARCHAR2
+    d_estado IN VARCHAR2,
+    p_resultado OUT VARCHAR2
 ) AS
 BEGIN
     UPDATE Doctor
@@ -659,12 +666,18 @@ BEGIN
         telefono = d_telefono,
         estado = d_estado
     WHERE id_doctor = d_id;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Doctor actualizado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Doctor no encontrado para actualizar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
-BEGIN
-    C##HospitalExpress.SP_ACTUALIZAR_DOCTOR(d_id => 2, d_nombre => 'Mario', 
-    d_direccion => 'Cartago', d_telefono => '6921-9025', d_estado => 'Inactivo');
-END;
+
 
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_DOCTOR(
 
@@ -690,14 +703,23 @@ EXCEPTION
         d_resultado := 'ERROR: ' || SQLERRM;
 END;
 
-
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_DOCTOR (
-    d_id IN INT
+    d_id IN INT,
+    p_resultado OUT VARCHAR2
 ) AS
 BEGIN
     DELETE FROM Doctor WHERE id_doctor = d_id;
-    COMMIT;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Doctor eliminado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Doctor no encontrado para eliminar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
+
 
 --STORED PROCEDURES DE DOCTORES
 CREATE OR REPLACE PROCEDURE SP_OBTENER_DOCTORES_ESTADO (
@@ -1182,7 +1204,6 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_ESPECIALIDAD (
 )
 AS
 BEGIN
-    -- Insertar en especialidades
     INSERT INTO Especialidades (nombre, descripcion)
     VALUES (p_nombre, p_descripcion);
     

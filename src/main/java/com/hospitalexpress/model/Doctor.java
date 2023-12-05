@@ -24,12 +24,15 @@ import lombok.Setter;
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_estado", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_resultado", type = String.class)})
 
-@NamedStoredProcedureQuery(name = "Doctor.insertDoctor", procedureName = "SP_INSERTAR_DOCTOR", parameters = {
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_nombre", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_direccion", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_telefono", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_estado", type = String.class)
-})
+@NamedStoredProcedureQuery(name = "Doctor.InsertarDoctor",procedureName = "SP_INSERTAR_DOCTOR",parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_nombre", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_direccion", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_telefono", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "d_estado", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "d_resultado", type = String.class)
+    }
+)
+
 
 public class Doctor {
 

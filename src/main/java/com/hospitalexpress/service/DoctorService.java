@@ -32,5 +32,16 @@ public class DoctorService {
             return null;
         }
     }
+    
+     @Transactional
+    public void insertarDoctor(String nombre, String direccion, String telefono, String estado) {
+        try {
+            String resultado = null; 
+            doctorRepository.InsertarDoctor(nombre, direccion, telefono, estado, resultado);
+        } catch (Exception e) {
+            
+        }
+    }
+    
 }
 
