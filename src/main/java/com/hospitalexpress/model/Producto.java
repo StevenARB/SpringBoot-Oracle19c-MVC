@@ -56,9 +56,9 @@ public class Producto {
     private String descripcion;
 
     @Column(name = "cantidad")
-    private String cantidad;
+    private Integer  cantidad;
 
     @Column(name = "precio")
-    private String precio;
+    private BigDecimal precio;
 
 }

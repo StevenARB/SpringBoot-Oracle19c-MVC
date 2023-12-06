@@ -18,5 +18,5 @@ public class WebController {
     public String admin() {
         return "admin";
     }
-
+    
 }

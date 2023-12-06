@@ -35,4 +35,16 @@ public class EspecialidadService {
             return null;
         }
     }
+    
+     @Transactional
+    public void insertarEspecialidad(String nombre, String descripcion) {
+        try {
+            String resultado = null; 
+            especialidadRepository.InsertarEspecialidad(nombre, descripcion, resultado);
+        } catch (Exception e) {
+
+        }
+    }
+    
+    
 }

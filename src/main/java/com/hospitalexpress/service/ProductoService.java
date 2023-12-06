@@ -24,8 +24,8 @@ private ProductoRepository productoRepository;
                 producto.setNombre((String) nombre);
                 producto.setIdProducto((Integer) result.get("p_id_producto"));
                 producto.setDescripcion((String) result.get("p_descripcion"));
-                producto.setCantidad((String) result.get("p_cantidad"));
-                producto.setPrecio((String) result.get("p_precio"));
+                producto.setCantidad((Integer) result.get("p_cantidad"));
+                producto.setPrecio((BigDecimal) result.get("p_precio"));
 
                 System.out.println(producto.getIdProducto());
 
@@ -38,9 +38,14 @@ private ProductoRepository productoRepository;
         }
     }
 
-     @Transactional
-    public void InsertarProducto(String nombre, String descripcion, Integer cantidad, BigDecimal precio) {
-        productoRepository.InsertarProducto(nombre, descripcion, cantidad, precio);
+    @Transactional
+    public void insertarProducto(String nombre, String descripcion, Integer cantidad, BigDecimal precio) {
+        try {
+            String resultado = null; 
+            productoRepository.InsertarProducto(nombre, descripcion, cantidad, precio, resultado);
+        } catch (Exception e) {
+            
+        }
     }
 
 }
