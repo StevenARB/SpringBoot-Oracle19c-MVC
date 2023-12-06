@@ -24,6 +24,16 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Transactional
+    public String insertarUsuario(String username, String password, String rol, String estado) {
+        try {
+            String result = usuarioRepository.insertarUsuario(username, password, rol, estado);
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     @Transactional(readOnly = true)
     public List<Usuario> getUsuarios() {
         try {
@@ -46,12 +56,13 @@ public class UsuarioService {
 
                 usuarios.add(usuario);
             }
-            
-            for (Usuario usuario : usuarios) {
-                System.out.println(usuario.getId() + " " + usuario.getUsername());
+
+            if (!usuarios.isEmpty()) {
+                return usuarios;
+            } else {
+                return null;
             }
 
-            return usuarios;
         } catch (Exception e) {
             return null;
         }
@@ -73,6 +84,16 @@ public class UsuarioService {
             } else {
                 return null;
             }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Transactional
+    public String eliminarUsuario(String username) {
+        try {
+            String result = usuarioRepository.eliminarUsuario(username);
+            return result;
         } catch (Exception e) {
             return null;
         }

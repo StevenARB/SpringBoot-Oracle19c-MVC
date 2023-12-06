@@ -66,7 +66,7 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIOS (
 AS 
 BEGIN
     OPEN p_cursor FOR
-        SELECT * FROM usuarios;
+        SELECT * FROM usuarios ORDER BY id_usuario ASC;
 
     p_resultado := 'EXITO';
 EXCEPTION
