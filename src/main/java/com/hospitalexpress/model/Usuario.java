@@ -18,19 +18,34 @@ import lombok.Setter;
  *
  * @author retan
  */
+
 @Entity
 @Table(name = "usuarios")
 @Getter
 @Setter
+
+@NamedStoredProcedureQuery(name = "Usuario.insertarUsuario", procedureName = "SP_INSERTAR_USUARIO", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_password", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_rol", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_estado", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
 @NamedStoredProcedureQuery(name = "Usuario.getUsuarioByUsername", procedureName = "SP_CONSULTAR_USUARIO", parameters = {
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_id_usuario", type = Integer.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_rol", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_estado", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
 @NamedStoredProcedureQuery(name = "Usuario.getUsuarios", procedureName = "SP_CONSULTAR_USUARIOS", parameters = {
     @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cursor", type = Object.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
+@NamedStoredProcedureQuery(name = "Usuario.eliminarUsuario", procedureName = "SP_ELIMINAR_USUARIO", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
 public class Usuario {
 
     @Id
