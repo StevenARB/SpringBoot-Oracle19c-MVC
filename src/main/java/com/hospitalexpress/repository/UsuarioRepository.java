@@ -5,6 +5,7 @@
 package com.hospitalexpress.repository;
 
 import com.hospitalexpress.model.Usuario;
+import java.util.List;
 import java.util.Map;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    
+    @Procedure(name = "Usuario.getUsuarios")
+    List<Object[]> getUsuarios();
 
     @Procedure(name = "Usuario.getUsuarioByUsername")
     Map<String, Object> getUsuarioByUsername(@Param("p_username") String username);

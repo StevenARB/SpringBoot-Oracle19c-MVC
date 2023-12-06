@@ -6,6 +6,7 @@ package com.hospitalexpress.controller;
 
 import com.hospitalexpress.model.Usuario;
 import com.hospitalexpress.service.UsuarioService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +23,30 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @GetMapping("/usuarios")
+    public String findUsuarios(Model model) {
+        try {
+            List<Usuario> listUsuario = usuarioService.getUsuarios();
+            if (listUsuario != null) {
+                model.addAttribute("usuarios", listUsuario);
+            } else {
+                model.addAttribute("usuarioNoEncontrado", true);
+            }
+        } catch (Exception e) {
+            model.addAttribute("usuarioNoEncontrado", true);
+        }
+        return "usuarios";
+    }
+
     @GetMapping("/findUsuarioByUsername/{username}")
     public String findUsuarioByUsername(Model model, @PathVariable String username) {
         try {
             Usuario usuario = usuarioService.getUsuarioByUsername(username);
-            model.addAttribute("usuario", usuario);
+            if (usuario != null) {
+                model.addAttribute("usuario", usuario);
+            } else {
+                model.addAttribute("usuarioNoEncontrado", true);
+            }
         } catch (Exception e) {
             model.addAttribute("usuarioNoEncontrado", true);
         }

@@ -17,8 +17,8 @@ public class DoctorController {
     @GetMapping("/findDoctorById/{id_doctor}")
     public String findDoctorById(Model model, @PathVariable Integer id_doctor) {
         try {
-            if (doctorService.getDoctorById(id_doctor) != null) {
-                Doctor doctor = doctorService.getDoctorById(id_doctor);
+            Doctor doctor = doctorService.getDoctorById(id_doctor);
+            if (doctor != null) {
                 model.addAttribute("doctor", doctor);
             } else {
                 model.addAttribute("doctorNoEncontrado", true);
@@ -26,6 +26,6 @@ public class DoctorController {
         } catch (Exception e) {
             model.addAttribute("doctorNoEncontrado", true);
         }
-        return "doctor/doctor"; 
+        return "doctor/doctor";
     }
 }
