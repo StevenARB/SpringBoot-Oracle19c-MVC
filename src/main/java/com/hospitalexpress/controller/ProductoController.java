@@ -2,14 +2,13 @@ package com.hospitalexpress.controller;
 
 import com.hospitalexpress.model.Producto;
 import com.hospitalexpress.service.ProductoService;
-import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ProductoController {
@@ -28,15 +27,20 @@ public class ProductoController {
         return "producto/producto";
     }
     
-    @PostMapping("/InsertarProducto")
-    public String InsertarProducto(
-        @RequestParam String nombre,
-        @RequestParam String descripcion,
-        @RequestParam Integer cantidad,
-        @RequestParam BigDecimal precio
-    ) {
-        productoService.InsertarProducto(nombre, descripcion, cantidad, precio);
-        return "redirect:/listaProductos";
+    @GetMapping("/producto/insertar")
+    public String mostrarFormulario(Model model) {
+        model.addAttribute("producto", new Producto());
+
+        return "producto/insertar";
     }
+
+    @PostMapping("/producto/insertar")
+    public String insertarProducto(@ModelAttribute Producto producto, Model model) {
+        productoService.insertarProducto(producto.getNombre(), producto.getDescripcion(), producto.getCantidad(), producto.getPrecio());
+        model.addAttribute("mensaje", "Producto insertado exitosamente");
+
+        return "producto/insertar";
+    }
+    
 
 }
