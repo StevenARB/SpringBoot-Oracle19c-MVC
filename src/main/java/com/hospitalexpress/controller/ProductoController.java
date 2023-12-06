@@ -2,6 +2,7 @@ package com.hospitalexpress.controller;
 
 import com.hospitalexpress.model.Producto;
 import com.hospitalexpress.service.ProductoService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,24 @@ public class ProductoController {
         return "producto/producto";
     }
     
+    @GetMapping("/productos")
+public String findProductos(Model model) {
+    try {
+        List<Producto> listProductos = productoService.getProductos();
+        if (listProductos != null) {
+            model.addAttribute("productos", listProductos);
+        } else {
+            model.addAttribute("listaVacia", true);
+        }
+    } catch (Exception e) {
+        model.addAttribute("listaVacia", true);
+    }
+    return "producto/productos";
+}
+
+    
+    
+    
     @GetMapping("/producto/insertar")
     public String mostrarFormulario(Model model) {
         model.addAttribute("producto", new Producto());
@@ -42,5 +61,16 @@ public class ProductoController {
         return "producto/insertar";
     }
     
+    @GetMapping("/producto/eliminar/{idProducto}")
+public String eliminarProducto(Model model, @PathVariable Integer idProducto) {
+    try {
+        String result = productoService.eliminarProducto(idProducto);
+        model.addAttribute("resultado", result);
+    } catch (Exception e) {
+        model.addAttribute("error", true);
+    }
+    return "redirect:/productos";
+}
+
 
 }

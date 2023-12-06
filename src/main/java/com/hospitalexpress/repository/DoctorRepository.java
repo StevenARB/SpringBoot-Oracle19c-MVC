@@ -1,6 +1,7 @@
 package com.hospitalexpress.repository;
 
 import com.hospitalexpress.model.Doctor;
+import java.util.List;
 import java.util.Map;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
@@ -20,5 +21,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
         @Param("d_estado") String estado,
         @Param("d_resultado") String resultado
     );
+        
+        @Procedure(name = "Doctor.getDoctores")
+List<Object[]> getDoctores();
 
+    @Procedure(name = "Doctor.eliminarDoctor")
+    String eliminarDoctor(@Param("p_id") Integer id);
 }

@@ -2,6 +2,10 @@ package com.hospitalexpress.service;
 
 import com.hospitalexpress.model.Doctor;
 import com.hospitalexpress.repository.DoctorRepository;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +41,41 @@ public class DoctorService {
         }
     }
     
+    @Transactional(readOnly = true)
+public List<Doctor> getDoctores() {
+    try {
+        List<Object[]> resultList = doctorRepository.getDoctores();
+        List<Doctor> doctores = new ArrayList<>();
+
+        for (Object[] result : resultList) {
+            BigDecimal idDoctor = (BigDecimal) result[0];
+            String nombre = (String) result[1];
+            String direccion = (String) result[2];
+            String telefono = (String) result[3];
+            String estado = (String) result[4];
+
+            Doctor doctor = new Doctor();
+            doctor.setId(idDoctor.intValue());
+            doctor.setNombre(nombre);
+            doctor.setDireccion(direccion);
+            doctor.setTelefono(telefono);
+            doctor.setEstado(estado);
+
+            doctores.add(doctor);
+        }
+
+            if (!doctores.isEmpty()) {
+                return doctores;
+            } else {
+                return null;
+            }
+
+    } catch (Exception e) {
+        return null;
+    }
+}
+
+    
      @Transactional
     public void insertarDoctor(String nombre, String direccion, String telefono, String estado) {
         try {
@@ -46,5 +85,18 @@ public class DoctorService {
             
         }
     }
+    
+    
+    
+    
+@Transactional
+public String eliminarDoctor(Integer id) {
+    try {
+        String result = doctorRepository.eliminarDoctor(id);
+        return result;
+    } catch (Exception e) {
+        return null;
+    }
+}
     
 }

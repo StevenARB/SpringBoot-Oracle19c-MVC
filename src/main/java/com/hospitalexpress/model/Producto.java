@@ -32,6 +32,17 @@ import lombok.Setter;
 )
 
 @NamedStoredProcedureQuery(
+    name = "Producto.getProductos",
+    procedureName = "C##HospitalExpress.SP_CONSULTAR_PRODUCTOS",
+    resultClasses = Producto.class,
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cursor", type = Object.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
+
+@NamedStoredProcedureQuery(
     name = "Producto.InsertarProducto",
     procedureName = "SP_INSERTAR_PRODUCTOS",
     parameters = {
@@ -42,6 +53,16 @@ import lombok.Setter;
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
     }
 )
+
+@NamedStoredProcedureQuery(
+    name = "Producto.eliminarProducto",
+    procedureName = "C##HospitalExpress.SP_ELIMINAR_PRODUCTOS",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_producto", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
 
 public class Producto {
 

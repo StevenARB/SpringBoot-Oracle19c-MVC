@@ -1093,128 +1093,6 @@ BEGIN
     RETURN d_cursor;
 END;
 
-CREATE TABLE Inventario (
-    id_inventario INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nombre VARCHAR2(150),
-    descripcion VARCHAR2(255),
-    cantidad INT,
-    id_producto INT,
-    FOREIGN KEY (id_producto) REFERENCES C##HospitalExpress.Productos(id_producto)
-);
-
-
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_INVENTARIO (
-    p_nombre  IN VARCHAR2,
-    p_descripcion  IN VARCHAR2,
-    p_cantidad  IN INT,
-    p_id_producto  IN INT,
-    p_resultado OUT VARCHAR2
-)
-AS
-BEGIN
-    DECLARE
-        i_producto_existente NUMBER;
-    BEGIN
-        SELECT COUNT(*) INTO v_producto_existente
-        FROM C##HospitalExpress.Productos
-        WHERE id_producto = p_id_producto;
-
-        IF i_producto_existente = 0 THEN
-            p_resultado := 'ERROR: El producto no existe.';
-            RETURN;
-        END IF;
-    END;
-
-    -- Insertar en el inventario
-    INSERT INTO Inventario (nombre, descripcion, cantidad, id_producto)
-    VALUES (p_nombre, p_descripcion, p_cantidad, p_id_producto);
-    
-    COMMIT;
-    p_resultado := 'EXITO';
-EXCEPTION
-    WHEN OTHERS THEN
-        p_resultado := 'ERROR: ' || SQLERRM;
-END;
-
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_INVENTARIO (
-    p_id_inventario IN INT,
-    p_nombre OUT VARCHAR2,
-    p_descripcion OUT VARCHAR2,
-    p_cantidad OUT INT,
-    p_id_producto OUT INT,
-    p_resultado OUT VARCHAR2
-) 
-AS 
-BEGIN
-    SELECT nombre, descripcion, cantidad, id_producto
-    INTO p_nombre, p_descripcion, p_cantidad, p_id_producto
-    FROM Inventario
-    WHERE id_inventario = p_id_inventario;
-
-    p_resultado := 'EXITO';
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        p_resultado := 'ERROR: Producto en inventario no encontrado';
-    WHEN OTHERS THEN
-        p_resultado := 'ERROR: ' || SQLERRM;
-END;
-
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_INVENTARIO (
-    p_id_inventario IN NUMBER,
-    p_nombre IN VARCHAR2,
-    p_descripcion IN VARCHAR2,
-    p_cantidad IN NUMBER,
-    p_id_producto IN NUMBER,
-    p_resultado OUT VARCHAR2
-)
-AS
-BEGIN
-    -- Validar si el producto existe antes de actualizar en el inventario
-    DECLARE
-        v_producto_existente NUMBER;
-    BEGIN
-        SELECT COUNT(*) INTO v_producto_existente
-        FROM C##HospitalExpress.Productos
-        WHERE id_producto = p_id_producto;
-
-        IF v_producto_existente = 0 THEN
-            p_resultado := 'ERROR: El producto no existe.';
-            RETURN;
-        END IF;
-    END;
-
-    -- Actualizar en el inventario
-    UPDATE Inventario
-    SET nombre = p_nombre,
-        descripcion = p_descripcion,
-        cantidad = p_cantidad,
-        id_producto = p_id_producto
-    WHERE id_inventario = p_id_inventario;
-    
-    COMMIT;
-    p_resultado := 'EXITO';
-EXCEPTION
-    WHEN OTHERS THEN
-        p_resultado := 'ERROR: ' || SQLERRM;
-END;
-
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_INVENTARIO (
-    p_id_inventario IN NUMBER,
-    p_resultado OUT VARCHAR2
-)
-AS
-BEGIN
-    -- Eliminar del inventario
-    DELETE FROM Inventario WHERE id_inventario = p_id_inventario;
-    
-    COMMIT;
-    p_resultado := 'EXITO';
-EXCEPTION
-    WHEN OTHERS THEN
-        p_resultado := 'ERROR: ' || SQLERRM;
-END;
-
-
 CREATE TABLE Especialidades(
     id_especialidad INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nombre VARCHAR2(100),
@@ -1361,28 +1239,6 @@ EXCEPTION
 END;
 
 
---VISTA DE INVENTARIO Y PRODUCTO
-CREATE VIEW Vista_Productos_Inventario AS
-SELECT 
-    P.ID_PRODUCTO,
-    P.NOMBRE AS NOMBRE_PRODUCTO,
-    P.DESCRIPCION AS DESCRIPCION_PRODUCTO,
-    P.CANTIDAD AS CANTIDAD_PRODUCTO,
-    P.PRECIO,
-    I.ID_INVENTARIO,
-    I.CANTIDAD AS CANTIDAD_INVENTARIO
-FROM PRODUCTOS P
-JOIN INVENTARIO I ON P.ID_PRODUCTO = I.ID_PRODUCTO;
-
---SE AGREGO LA FK DE INVNETARIO A PRODUCTOS
-ALTER TABLE PRODUCTOS
-ADD id_inventario INT;
-
-ALTER TABLE PRODUCTOS
-ADD CONSTRAINT FK_PRODUCTOS_INVENTARIO
-FOREIGN KEY (id_inventario) REFERENCES Inventario (id_inventario);
-
-
 --FUNCION DE ESPECIALIDADES
 
 CREATE OR REPLACE FUNCTION FN_CONTAR_DOCTORES_ESPECIALIDAD(
@@ -1397,3 +1253,59 @@ BEGIN
     
     RETURN v_cantidad;
 END;
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_DOCTORES (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM C##HospitalExpress.Doctor;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron doctores';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+/
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PRODUCTOS (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM C##HospitalExpress.Productos;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron productos';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_ESPECIALIDADES (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM C##HospitalExpress.Especialidades;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron especialidades';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+/
