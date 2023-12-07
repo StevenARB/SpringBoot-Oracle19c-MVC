@@ -59,11 +59,29 @@ EXCEPTION
 END;
 
 --READ
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIOS (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM usuarios ORDER BY id_usuario ASC;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron usuarios';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO (
     p_username IN VARCHAR2,
     p_id_usuario OUT INTEGER,
     p_rol OUT VARCHAR2,
-    p_estado OUT VARCHAR2
+    p_estado OUT VARCHAR2,
+    p_resultado OUT VARCHAR2
 ) 
 AS 
 BEGIN
@@ -71,6 +89,13 @@ BEGIN
     INTO p_id_usuario, p_rol, p_estado
     FROM usuarios
     WHERE username = p_username;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Usuario no encontrado';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
 --UPDATE
@@ -161,7 +186,7 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_PACIENTE (
     p_fecha_nac IN DATE,
     p_id_usuario IN INTEGER,
     p_resultado OUT VARCHAR2
-) 
+)
 AS 
 BEGIN
     INSERT INTO
@@ -456,7 +481,8 @@ CREATE TABLE C##HospitalExpress.Cita (
     tipo VARCHAR(100),
     fecha_hora DATE,
     estado VARCHAR(100),
-    FOREIGN KEY (id_doctor) REFERENCES C##HospitalExpress.Doctor(id_doctor)
+    FOREIGN KEY (id_doctor) REFERENCES C##HospitalExpress.Doctor(id_doctor),
+    FOREIGN KEY (id_paciente) REFERENCES C##HospitalExpress.Pacientes(id_paciente)
 );
 
 --CREACION DE PROCEDIMIENTOS
@@ -633,24 +659,31 @@ CREATE TABLE C##HospitalExpress.Doctor(
     telefono VARCHAR(250),
     estado VARCHAR2(25)
 );
-
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_DOCTOR (
     d_nombre IN VARCHAR2,
     d_direccion IN VARCHAR2,
     d_telefono IN VARCHAR2,
-    d_estado IN VARCHAR2
+    d_estado IN VARCHAR2,
+    d_resultado OUT VARCHAR2
 ) AS
 BEGIN
     INSERT INTO Doctor (nombre, direccion, telefono, estado)
     VALUES (d_nombre, d_direccion, d_telefono, d_estado);
-END ;
+
+    d_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        d_resultado := 'ERROR: ' || SQLERRM;
+END;
+
 
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_DOCTOR (
-    d_id IN NUMBER,
+    d_id IN INT,
     d_nombre IN VARCHAR2,
     d_direccion IN VARCHAR2,
     d_telefono IN VARCHAR2,
-    d_estado IN VARCHAR2
+    d_estado IN VARCHAR2,
+    p_resultado OUT VARCHAR2
 ) AS
 BEGIN
     UPDATE Doctor
@@ -659,26 +692,66 @@ BEGIN
         telefono = d_telefono,
         estado = d_estado
     WHERE id_doctor = d_id;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Doctor actualizado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Doctor no encontrado para actualizar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_DOCTOR(
+
+    d_id_doctor IN INT,
+    d_nombre OUT VARCHAR2,
+    d_direccion OUT VARCHAR2,
+    d_telefono OUT VARCHAR2,
+    d_estado OUT VARCHAR2,
+    d_resultado OUT VARCHAR2
+) 
+AS 
 BEGIN
-    C##HospitalExpress.SP_ACTUALIZAR_DOCTOR(d_id => 2, d_nombre => 'Mario', 
-    d_direccion => 'Cartago', d_telefono => '6921-9025', d_estado => 'Inactivo');
+    SELECT nombre, direccion, telefono, estado
+    INTO d_nombre, d_direccion, d_telefono, d_estado
+    FROM Doctor
+    WHERE id_doctor = d_id_doctor;
+
+    d_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        d_resultado := 'ERROR: Doctor no encontrado';
+    WHEN OTHERS THEN
+        d_resultado := 'ERROR: ' || SQLERRM;
 END;
 
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_DOCTOR (
-    d_id IN NUMBER
+    d_id IN INT,
+    p_resultado OUT VARCHAR2
 ) AS
 BEGIN
     DELETE FROM Doctor WHERE id_doctor = d_id;
-    COMMIT;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Doctor eliminado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Doctor no encontrado para eliminar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
+
 
 --STORED PROCEDURES DE DOCTORES
 CREATE OR REPLACE PROCEDURE SP_OBTENER_DOCTORES_ESTADO (
     d_estado_doctor IN VARCHAR2
 ) AS
-    d_id NUMBER;
+    d_id INT;
     d_nombre VARCHAR2(50);
     d_estado VARCHAR2(10);
 
@@ -699,7 +772,7 @@ BEGIN
 END;
 
 CREATE OR REPLACE PROCEDURE SP_CAMBIAR_ESTADO_DOCTOR (
-    d_id IN NUMBER,
+    d_id IN INT,
     d_nuevo_estado IN VARCHAR2
 ) AS
 BEGIN
@@ -711,7 +784,7 @@ END;
 
 CREATE OR REPLACE PROCEDURE SP_OBTENER_CANTIDAD_DOCTORES_POR_ESTADO (
     d_estado IN VARCHAR2,
-    d_cantidad OUT NUMBER
+    d_cantidad OUT INT
 ) AS
 BEGIN
     SELECT COUNT(*) INTO d_cantidad
@@ -721,10 +794,10 @@ END;
 
 --CURSOR DE DOCTORES
 CREATE OR REPLACE PROCEDURE SP_OBTENER_DOCTOR_POR_ID(
-    d_id IN NUMBER
+    d_id IN INT
 )
 IS
-    d_id_doctor NUMBER;
+    d_id_doctor INT;
     d_nombre VARCHAR2(50);
     d_telefono VARCHAR2(55);
     d_estado VARCHAR2(50);
@@ -820,7 +893,6 @@ BEGIN
 END BorrarMedicamento;
   
 --PRODUCTOS 
---FALTA AGREGAR LA PARTE DE INVENTARIO: ID y FOREING KEY
  CREATE TABLE C##HospitalExpress.Productos (
     id_producto INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
@@ -828,31 +900,57 @@ END BorrarMedicamento;
     Cantidad INT,
     Precio DECIMAL(10, 2)
 );
-
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_PRODUCTOS (
-    p_nombre  VARCHAR2,
-    p_descripcion  VARCHAR2,
-    p_cantidad  NUMBER,
-    p_precio  DECIMAL
+    p_nombre IN VARCHAR2,
+    p_descripcion IN VARCHAR2,
+    p_cantidad IN NUMBER,
+    p_precio IN DECIMAL,
+    p_resultado OUT VARCHAR2
 )
 AS
 BEGIN
     INSERT INTO Productos ( Nombre, Descripcion, Cantidad, Precio)
     VALUES (p_nombre, p_descripcion, p_cantidad, p_precio);
-    COMMIT;
+ 
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 BEGIN 
     C##HospitalExpress.SP_INSERTAR_PRODUCTOS(
     'Fluoxeritan', 'Antidepresivo', 300, 19.99);
 END;
 
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PRODUCTOS(
+    p_id_producto IN INT,
+    p_nombre OUT VARCHAR2,
+    p_descripcion OUT VARCHAR2,
+    p_cantidad OUT VARCHAR2,
+    p_precio OUT VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT Nombre, Descripcion, Cantidad, Precio
+    INTO p_nombre, p_descripcion, p_cantidad, p_precio
+    FROM Productos
+    WHERE id_producto = p_id_producto;
 
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_PRODCUTOS (
-    p_id_producto IN NUMBER,
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Producto no encontrado';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_PRODUCTOS (
+    p_id_producto IN INT,
     p_nombre IN VARCHAR2,
     p_descripcion IN VARCHAR2,
-    p_cantidad IN NUMBER,
-    p_precio IN DECIMAL
+    p_cantidad IN INT,
+    p_precio IN DECIMAL,
+    p_resultado OUT VARCHAR2
 )
 AS
 BEGIN
@@ -862,26 +960,35 @@ BEGIN
         Cantidad = p_cantidad,
         Precio = p_precio
     WHERE id_producto = p_id_producto;
-    COMMIT;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Producto actualizado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Producto no encontrado para actualizar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
-BEGIN
-    C##HospitalExpress.SP_ACTUALIZAR_PRODCUTOS(
-    p_id_producto => 1,
-    p_nombre => 'LOL',
-        p_descripcion => 'LOL',
-        p_cantidad => 50,
-        p_precio => 39.99
-    );
-END;
+
 
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_PRODUCTOS (
-    p_id_producto IN NUMBER
+    p_id_producto IN INT,
+    p_resultado OUT VARCHAR2
 )
 AS
 BEGIN
     DELETE FROM Productos WHERE id_producto = p_id_producto;
-    COMMIT;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Producto eliminado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Producto no encontrado para eliminar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
 
@@ -893,7 +1000,7 @@ AS
     p_id_producto Productos.id_producto%TYPE;
     p_nombre VARCHAR2(100);
     p_descripcion VARCHAR2(255);
-    p_cantidad NUMBER;
+    p_cantidad INT;
     p_precio Productos.Precio%TYPE;
 
     CURSOR cursorProductos IS
@@ -923,10 +1030,10 @@ CREATE OR REPLACE PROCEDURE SP_Buscar_Productos_Nombre(
     p_nombre_in IN productos.nombre%TYPE
 )
 IS
-    p_id_producto NUMBER;
+    p_id_producto INT;
     p_nombre_producto VARCHAR2(255);
     p_descripcion VARCHAR2(255);
-    p_cantidad NUMBER;
+    p_cantidad INT;
     p_precio productos.precio%TYPE;
 
     CURSOR cursorProductos IS
@@ -987,20 +1094,86 @@ BEGIN
     RETURN d_cursor;
 END;
 
-CREATE TABLE Inventario (
-    id_inventario INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nombre VARCHAR2(150),
-    descripcion VARCHAR2(255),
-    cantidad INT,
-    id_producto INT,
-    FOREIGN KEY (id_producto) REFERENCES C##HospitalExpress.Productos(id_producto)
-);
-
 CREATE TABLE Especialidades(
     id_especialidad INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nombre VARCHAR2(100),
     descripcion VARCHAR2(255)
 );
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_ESPECIALIDAD (
+    p_nombre  IN VARCHAR2,
+    p_descripcion  IN VARCHAR2,
+    p_resultado OUT VARCHAR2
+)
+AS
+BEGIN
+    INSERT INTO Especialidades (nombre, descripcion)
+    VALUES (p_nombre, p_descripcion);
+    
+    COMMIT;
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_ESPECIALIDAD (
+    p_id_especialidad IN INT,
+    p_nombre OUT VARCHAR2,
+    p_descripcion OUT VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT nombre, descripcion
+    INTO p_nombre, p_descripcion
+    FROM Especialidades
+    WHERE id_especialidad = p_id_especialidad;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Especialidad no encontrada';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_ESPECIALIDAD (
+    p_id_especialidad IN NUMBER,
+    p_nombre IN VARCHAR2,
+    p_descripcion IN VARCHAR2,
+    p_resultado OUT VARCHAR2
+)
+AS
+BEGIN
+    UPDATE Especialidades
+    SET nombre = p_nombre,
+        descripcion = p_descripcion
+    WHERE id_especialidad = p_id_especialidad;
+    
+    COMMIT;
+    p_resultado := 'EXITO: Especialidad actualizada exitosamente';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_ESPECIALIDAD (
+    p_id_especialidad IN NUMBER,
+    p_resultado OUT VARCHAR2
+)
+AS
+BEGIN
+    -- Eliminar de especialidades
+    DELETE FROM Especialidades WHERE id_especialidad = p_id_especialidad;
+    
+    COMMIT;
+    p_resultado := 'EXITO: Especialidad eliminada exitosamente';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
 
 CREATE TABLE doctores_especialidades (
     id_doctor INTEGER,
@@ -1010,26 +1183,61 @@ CREATE TABLE doctores_especialidades (
     FOREIGN KEY (id_especialidad) REFERENCES Especialidades(id_especialidad)
 );
 
---VISTA DE INVENTARIO Y PRODUCTO
-CREATE VIEW Vista_Productos_Inventario AS
-SELECT 
-    P.ID_PRODUCTO,
-    P.NOMBRE AS NOMBRE_PRODUCTO,
-    P.DESCRIPCION AS DESCRIPCION_PRODUCTO,
-    P.CANTIDAD AS CANTIDAD_PRODUCTO,
-    P.PRECIO,
-    I.ID_INVENTARIO,
-    I.CANTIDAD AS CANTIDAD_INVENTARIO
-FROM PRODUCTOS P
-JOIN INVENTARIO I ON P.ID_PRODUCTO = I.ID_PRODUCTO;
 
---SE AGREGO LA FK DE INVNETARIO A PRODUCTOS
-ALTER TABLE PRODUCTOS
-ADD id_inventario INT;
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_DOCTOR_ESPECIALIDAD (
+    p_id_doctor  IN INTEGER,
+    p_id_especialidad  IN INTEGER,
+    p_resultado OUT VARCHAR2
+)
+AS
+BEGIN
+    -- Insertar en doctores_especialidades
+    INSERT INTO doctores_especialidades (id_doctor, id_especialidad)
+    VALUES (p_id_doctor, p_id_especialidad);
+    
+    COMMIT;
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
 
-ALTER TABLE PRODUCTOS
-ADD CONSTRAINT FK_PRODUCTOS_INVENTARIO
-FOREIGN KEY (id_inventario) REFERENCES Inventario (id_inventario);
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_DOCTOR_ESPECIALIDAD (
+    p_id_doctor IN INTEGER,
+    p_id_especialidad IN INTEGER,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT 1
+    INTO p_resultado
+    FROM doctores_especialidades
+    WHERE id_doctor = p_id_doctor AND id_especialidad = p_id_especialidad;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Relación doctor-especialidad no encontrada';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_DOCTOR_ESPECIALIDAD (
+    p_id_doctor IN INTEGER,
+    p_id_especialidad IN INTEGER,
+    p_resultado OUT VARCHAR2
+)
+AS
+BEGIN
+    DELETE FROM doctores_especialidades
+    WHERE id_doctor = p_id_doctor AND id_especialidad = p_id_especialidad;
+    
+    COMMIT;
+    p_resultado := 'EXITO: Doctor-Especialidad eliminada exitosamente';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
 
 
 --FUNCION DE ESPECIALIDADES
@@ -1046,3 +1254,59 @@ BEGIN
     
     RETURN v_cantidad;
 END;
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_DOCTORES (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM C##HospitalExpress.Doctor;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron doctores';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+/
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PRODUCTOS (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM C##HospitalExpress.Productos;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron productos';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_ESPECIALIDADES (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM C##HospitalExpress.Especialidades;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron especialidades';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+/
