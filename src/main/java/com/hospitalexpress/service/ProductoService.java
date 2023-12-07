@@ -24,12 +24,12 @@ private ProductoRepository productoRepository;
             if (result != null && !result.isEmpty()) {
                 Producto producto = new Producto();
                 producto.setNombre((String) nombre);
-                producto.setIdProducto((Integer) result.get("p_id_producto"));
+                producto.setId((Integer) result.get("p_id_producto"));
                 producto.setDescripcion((String) result.get("p_descripcion"));
                 producto.setCantidad((Integer) result.get("p_cantidad"));
                 producto.setPrecio((BigDecimal) result.get("p_precio"));
 
-                System.out.println(producto.getIdProducto());
+                System.out.println(producto.getId());
 
                 return producto;
             } else {
@@ -54,7 +54,7 @@ public List<Producto> getProductos() {
             BigDecimal precio = (BigDecimal) result[4];
 
             Producto producto = new Producto();
-            producto.setIdProducto(idProducto.intValue());
+            producto.setId(idProducto.intValue());
             producto.setNombre(nombre);
             producto.setDescripcion(descripcion);
             producto.setCantidad(cantidad);

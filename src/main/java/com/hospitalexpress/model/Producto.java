@@ -20,7 +20,7 @@ import lombok.Setter;
 @Setter   
 @NamedStoredProcedureQuery(
     name = "Producto.getProductoByNombre",
-    procedureName = "SP_CONSULTAR_PRODUCTOS",
+    procedureName = "SP_CONSULTAR_PRODUCTO",
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_id_producto", type = Integer.class),
@@ -68,7 +68,7 @@ public class Producto {
 
     @Id
     @Column(name = "id_producto")
-    private Integer idProducto;
+    private Integer id;
 
     @Column(name = "nombre")
     private String nombre;

@@ -2,6 +2,7 @@ package com.hospitalexpress.controller;
 
 import com.hospitalexpress.model.Especialidad;
 import com.hospitalexpress.service.EspecialidadService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +33,21 @@ public class EspecialidadController {
         return "especialidad/especialidad";
     }
     
+    @GetMapping("/especialidades")
+public String findEspecialidades(Model model) {
+    try {
+        List<Especialidad> listEspecialidades = especialidadService.getEspecialidades();
+        if (listEspecialidades != null) {
+            model.addAttribute("especialidades", listEspecialidades);
+        } else {
+            model.addAttribute("listaVacia", true);
+        }
+    } catch (Exception e) {
+        model.addAttribute("listaVacia", true);
+    }
+    return "especialidad/especialidades";
+}
+
      @GetMapping("/especialidad/insertar")
     public String mostrarFormulario(Model model) {
         model.addAttribute("especialidad", new Especialidad());
