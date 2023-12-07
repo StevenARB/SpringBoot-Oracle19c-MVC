@@ -4,8 +4,6 @@
  */
 package com.hospitalexpress.controller;
 
-import com.hospitalexpress.service.CitaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -14,8 +12,5 @@ import org.springframework.stereotype.Controller;
  */
 @Controller
 public class CitaController {
-
-    @Autowired
-    private CitaService citaService;
 
 }

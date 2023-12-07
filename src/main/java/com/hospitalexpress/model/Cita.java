@@ -38,6 +38,8 @@ import lombok.Setter;
     }
 )
 
+/*faltante*/
+
 @NamedStoredProcedureQuery(
     name = "Cita.eliminarCita",
     procedureName = "SP_ELIMINAR_CITA",
