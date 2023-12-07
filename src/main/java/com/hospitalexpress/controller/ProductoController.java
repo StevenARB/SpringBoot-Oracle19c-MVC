@@ -44,8 +44,6 @@ public String findProductos(Model model) {
 }
 
     
-    
-    
     @GetMapping("/producto/insertar")
     public String mostrarFormulario(Model model) {
         model.addAttribute("producto", new Producto());

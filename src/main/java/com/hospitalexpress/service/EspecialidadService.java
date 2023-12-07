@@ -3,6 +3,9 @@ package com.hospitalexpress.service;
 
 import com.hospitalexpress.model.Especialidad;
 import com.hospitalexpress.repository.EspecialidadRepository;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +38,37 @@ public class EspecialidadService {
             return null;
         }
     }
+    
+    @Transactional(readOnly = true)
+public List<Especialidad> getEspecialidades() {
+    try {
+        List<Object[]> resultList = especialidadRepository.getEspecialidades();
+        List<Especialidad> especialidades = new ArrayList<>();
+
+        for (Object[] result : resultList) {
+            BigDecimal idEspecialidad = (BigDecimal) result[0];
+            String nombre = (String) result[1];
+            String descripcion = (String) result[2];
+
+            Especialidad especialidad = new Especialidad();
+            especialidad.setId(idEspecialidad.intValue());
+            especialidad.setNombre(nombre);
+            especialidad.setDescripcion(descripcion);
+            
+            especialidades.add(especialidad);
+        }
+
+        if (!especialidades.isEmpty()) {
+            return especialidades;
+        } else {
+            return null;
+        }
+
+    } catch (Exception e) {
+        return null;
+    }
+}
+
     
      @Transactional
     public void insertarEspecialidad(String nombre, String descripcion) {

@@ -26,6 +26,15 @@ import lombok.Setter;
 )
 
 @NamedStoredProcedureQuery(
+    name = "Especialidad.getEspecialidades",
+    procedureName = "SP_CONSULTAR_ESPECIALIDADES",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cursor", type = Object.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
+@NamedStoredProcedureQuery(
     name = "Especialidad.InsertarEspecialidad",
     procedureName = "SP_INSERTAR_ESPECIALIDAD",
     parameters = {

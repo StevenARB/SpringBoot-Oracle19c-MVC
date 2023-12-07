@@ -1,6 +1,7 @@
 package com.hospitalexpress.repository;
 
 import com.hospitalexpress.model.Especialidad;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +20,6 @@ public interface EspecialidadRepository extends JpaRepository<Especialidad, Long
             @Param("p_resultado") String resultado
     );
     
-    
+            @Procedure(name = "Especialidad.getEspecialidades")
+List<Object[]> getEspecialidades();
 }

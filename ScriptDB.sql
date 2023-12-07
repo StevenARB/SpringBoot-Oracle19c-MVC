@@ -922,7 +922,7 @@ BEGIN
     'Fluoxeritan', 'Antidepresivo', 300, 19.99);
 END;
 
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PRODUCTOS(
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PRODUCTO(
     p_id_producto IN INT,
     p_nombre OUT VARCHAR2,
     p_descripcion OUT VARCHAR2,

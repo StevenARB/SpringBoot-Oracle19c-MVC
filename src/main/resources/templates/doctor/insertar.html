@@ -175,34 +175,34 @@
                 </div>
             </div>
         </div>
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Nuevo Doctor</h1>
+        <a href="/doctores" class="btn btn-success" id="buttonListaDoctores" type="button">Lista de Doctores</a>
+    </div>
+    <form class="column" method="post">
+        <div class="form-input-sm mt-3">
+            <label for="nombre" class="form-label">Nombre del Doctor</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" required>
+        </div>
+        <div class="form-input-sm mt-3">
+            <label for="direccion" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="direccion" name="direccion" required>
+        </div>
+        <div class="form-input-sm mt-3">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input type="text" class="form-control" id="telefono" name="telefono" required>
+        </div>
+        <div class="form-input-sm mt-3">
+            <label for="estado" class="form-label">Estado</label>
+            <input type="text" class="form-control" id="estado" name="estado" required>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary mt-5" name="insertarDoctor">Insertar Doctor</button>
+        </div>
+    </form>
+</main>
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Nuevo Producto</h1>
-                <a href="/productos" class="btn btn-success" id="buttonListaProductos" type="button">Lista de Productos</a>
-            </div>
-            <form class="column" method="post">
-                <div class="form-input-sm mt-3">
-                    <label for="nombre" class="form-label">Nombre del Producto</label>
-                    <input type="text" class="form-control" id="nombre" name="nombre" required>
-                </div>
-                <div class="form-input-sm mt-3">
-                    <label for="descripcion" class="form-label">Descripción</label>
-                    <input type="text" class="form-control" id="descripcion" name="descripcion" required>
-                </div>
-                <div class="form-input-sm mt-3">
-                    <label for="cantidad" class="form-label">Cantidad</label>
-                    <input type="text" class="form-control" id="cantidad" name="cantidad" required>
-                </div>
-                <div class="form-input-sm mt-3">
-                    <label for="precio" class="form-label">Precio</label>
-                    <input type="text" class="form-control" id="precio" name="precio" required>
-                </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary mt-5" name="insertarProducto">Insertar Producto</button>
-                </div>
-            </form>
-        </main>
     </div>
 </div>
 <script src="../assets/js/password.js"></script>
