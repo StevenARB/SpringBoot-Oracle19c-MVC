@@ -7,6 +7,7 @@
         <title>Admin - Usuarios</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <link rel="stylesheet" href="/assets/css/admin.css">
+        <link rel="stylesheet" href="/assets/css/usuario.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
         <script src="/assets/js/admin.js"></script>
     </head>
@@ -178,53 +179,51 @@
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Lista de Usuarios</h1>
-                    <a href="/usuario/insertar" class="btn btn-primary" id="buttonNuevoUsuario" type="button">Nuevo Usuario</a>
+                    <h1 class="h2">Actualizar Usuario</h1>
+                    <a href="/usuarios" class="btn btn-success" id="buttonListaUsuarios" type="button">Lista de Usuarios</a>
                 </div>
-                <table class="table table-hover" th:if="${usuarios != null}" border="1">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Rol</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tr th:each="usuario : ${usuarios}">
-                        <td th:text="${usuario.id}"></td>
-                        <td th:text="${usuario.username}"></td>
-                        <td th:text="${usuario.rol}"></td>
-                        <td th:text="${usuario.estado}"></td>
-                        <td>
-                            <a th:href="@{/usuario/actualizar/{id}(id=${usuario.id})}" type="button" class="btn btn-outline-warning">Actualizar</a>
-                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" th:data-bs-target="'#modalEliminar' + ${usuario.id}">Eliminar</button>
-                            <div class="modal fade" th:id="'modalEliminar' + ${usuario.id}" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Eliminar Usuario</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-                                            <p style="font-size: 1.2rem;">¿Seguro de Eliminar este Usuario?</p>
-                                            <h2 th:text="${usuario.username}"></h2>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <a th:href="@{/usuario/eliminar/{username}(username=${usuario.username})}" type="button" class="btn btn-danger">Eliminar</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-        
-                <h1 th:if="${listaVacia}">No se encontraron Usuarios en el Sistema</h1>
+                <form th:if="${usuario != null}" class="column" method="post">
+                    <div class="form-input-sm mt-3">
+                        <label for="username" class="form-label">Nombre de Usuario</label>
+                        <input th:value="${usuario.username}" type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-input-sm mt-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input th:value="${usuario.password}" type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="form-input-sm mt-3">
+                        <label for="confirmPassword" class="form-label">Confirmación de Contraseña</label>
+                        <input th:value="${usuario.password}" type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <div class="form-input-sm mt-3">
+                        <label for="rol" class="form-label">Rol</label>
+                        <select class="form-select" aria-label="Default select example" id="rol" name="rol" required>
+                            <option th:if="${usuario.rol == null}" selected disabled value="">Seleccionar Rol</option>
+                            <option th:selected="${usuario.rol == 'Paciente'}" value="Paciente">Paciente</option>
+                            <option th:selected="${usuario.rol == 'Doctor'}" value="Doctor">Doctor</option>
+                            <option th:selected="${usuario.rol == 'Administrador'}" value="Administrador">Administrador</option>
+                        </select>
+                    </div>
+
+                    <div class="form-input-sm mt-3">
+                        <label for="estado" class="form-label">Estado</label>
+                        <select class="form-select" aria-label="Default select example" id="estado" name="estado" required>
+                            <option th:if="${usuario.estado == null}" selected disabled value="">Seleccionar Estado</option>
+                            <option th:selected="${usuario.estado == 'Activo'}" value="Activo">Activo</option>
+                            <option th:selected="${usuario.estado == 'Inactivo'}" value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    
+                        <div class="form-input-sm d-flex justify-content-between align-items-center mt-5">
+                        <button type="submit" class="btn btn-warning px-4" name="actualizarUsuario">Actualizar</button>
+                        <a href="/usuarios" class="btn btn-secondary px-4" type="button">Cancelar</a>
+                        </div>
+                   
+                </form>
             </main>
         </div>
     </div>
+        <script src="/assets/js/password.js"></script>
 </body>
 
 </html>

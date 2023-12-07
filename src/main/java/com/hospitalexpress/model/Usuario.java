@@ -31,7 +31,15 @@ import lombok.Setter;
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_estado", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
 
-@NamedStoredProcedureQuery(name = "Usuario.getUsuarioByUsername", procedureName = "SP_CONSULTAR_USUARIO", parameters = {
+@NamedStoredProcedureQuery(name = "Usuario.getUsuarioById", procedureName = "SP_CONSULTAR_USUARIO_ID", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_usuario", type = Integer.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_username", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_password", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_rol", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_estado", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
+@NamedStoredProcedureQuery(name = "Usuario.getUsuarioByUsername", procedureName = "SP_CONSULTAR_USUARIO_USERNAME", parameters = {
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_id_usuario", type = Integer.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_rol", type = String.class),
@@ -40,6 +48,14 @@ import lombok.Setter;
 
 @NamedStoredProcedureQuery(name = "Usuario.getUsuarios", procedureName = "SP_CONSULTAR_USUARIOS", parameters = {
     @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cursor", type = Object.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
+@NamedStoredProcedureQuery(name = "Usuario.actualizarUsuario", procedureName = "SP_ACTUALIZAR_USUARIO", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_usuario", type = Integer.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_password", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_rol", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_estado", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
 
 @NamedStoredProcedureQuery(name = "Usuario.eliminarUsuario", procedureName = "SP_ELIMINAR_USUARIO", parameters = {

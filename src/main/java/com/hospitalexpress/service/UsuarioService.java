@@ -68,6 +68,28 @@ public class UsuarioService {
         }
     }
 
+    public Usuario getUsuarioById(Integer id) {
+        try {
+
+            Map<String, Object> result = usuarioRepository.getUsuarioById(id);
+
+            if (result.get("p_resultado").equals("EXITO")) {
+                Usuario usuario = new Usuario();
+                usuario.setId((Integer) id);
+                usuario.setUsername((String) result.get("p_username"));
+                usuario.setPassword((String) result.get("p_password"));
+                usuario.setRol((String) result.get("p_rol"));
+                usuario.setEstado((String) result.get("p_estado"));
+
+                return usuario;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public Usuario getUsuarioByUsername(String username) {
         try {
 
@@ -84,6 +106,16 @@ public class UsuarioService {
             } else {
                 return null;
             }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Transactional
+    public String actualizarUsuario(Integer id, String username, String password, String rol, String estado) {
+        try {
+            String result = usuarioRepository.actualizarUsuario(id, username, password, rol, estado);
+            return result;
         } catch (Exception e) {
             return null;
         }

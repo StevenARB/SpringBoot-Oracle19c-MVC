@@ -76,7 +76,30 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO (
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO_ID (
+    p_id_usuario IN INTEGER,
+    p_username OUT VARCHAR2,
+    p_password OUT VARCHAR2,
+    p_rol OUT VARCHAR2,
+    p_estado OUT VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT username, password, rol, estado
+    INTO p_username, p_password, p_rol, p_estado
+    FROM usuarios
+    WHERE id_usuario = p_id_usuario;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Usuario no encontrado';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO_USERNAME (
     p_username IN VARCHAR2,
     p_id_usuario OUT INTEGER,
     p_rol OUT VARCHAR2,
@@ -100,19 +123,21 @@ END;
 
 --UPDATE
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_USUARIO (
+    p_id_usuario IN INTEGER,
     p_username IN VARCHAR2,
-    p_nuevo_password IN VARCHAR2,
-    p_nuevo_rol IN VARCHAR2,
-    p_nuevo_estado IN VARCHAR2,
+    p_password IN VARCHAR2,
+    p_rol IN VARCHAR2,
+    p_estado IN VARCHAR2,
     p_resultado OUT VARCHAR2
 ) 
 AS 
 BEGIN
     UPDATE usuarios
-    SET password = p_nuevo_password,
-        rol = p_nuevo_rol,
-        estado = p_nuevo_estado
-    WHERE username = p_username;
+    SET username = p_username,
+        password = p_password,
+        rol = p_rol,
+        estado = p_estado
+    WHERE id_usuario = p_id_usuario;
 
     IF SQL%ROWCOUNT > 0 THEN
         p_resultado := 'EXITO: Usuario actualizado exitosamente';
