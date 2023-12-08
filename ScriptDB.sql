@@ -537,8 +537,6 @@ END;
 
 --PROCEDIMIENTO ALMACENADO DE CITA INSERTtest
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_CITA (
-    p_id_cita IN INTEGER,
-    p_id_doctor IN INTEGER,
     p_id_paciente IN INTEGER,
     p_tipo IN VARCHAR2,
     p_fecha_hora IN DATE,
@@ -548,11 +546,9 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_CITA (
 AS 
 BEGIN
     INSERT INTO
-        Cita (id_cita, id_doctor, id_paciente, tipo, fecha_hora, estado)
+        Cita (id_paciente, tipo, fecha_hora, estado)
     VALUES
         (
-            p_id_cita,
-            p_id_doctor,
             p_id_paciente,
             p_tipo,
             p_fecha_hora,
@@ -858,23 +854,98 @@ FROM
     doctor;
        
 CREATE TABLE C##HospitalExpress.Medicamentos (
-    id_medicamento INT PRIMARY KEY,
+    id_medicamento INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
     Dosis VARCHAR(50),
     Cantidad INT,
     Precio DECIMAL(10, 2)
 );
-
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.InsertarNuevoMedicamento (
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_MEDICAMENTO (
     p_nombre IN VARCHAR2,
     p_dosis IN VARCHAR2,
     p_cantidad IN INT,
-    p_precio IN DECIMAL
+    p_precio IN DECIMAL,
+    p_resultado OUT VARCHAR2
 ) AS
 BEGIN
     INSERT INTO Medicamentos (Nombre, Dosis, Cantidad, Precio)
     VALUES (p_nombre, p_dosis, p_cantidad, p_precio);
-END InsertarNuevoMedicamento;
+
+    p_resultado := 'EXITO: Medicamento insertado exitosamente';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END SP_INSERTAR_MEDICAMENTO;
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_MEDICAMENTO(
+    p_id_medicamento IN INT,
+    p_nombre OUT VARCHAR2,
+    p_dosis OUT VARCHAR2,
+    p_cantidad OUT INT,
+    p_precio OUT DECIMAL,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT nombre, dosis, cantidad, precio
+    INTO p_nombre, p_dosis, p_cantidad, p_precio
+    FROM Medicamentos
+    WHERE id_medicamento = p_id_medicamento;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Medicamento no encontrado';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END SP_CONSULTAR_MEDICAMENTO;
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_MEDICAMENTO (
+    p_id_medicamento IN INT,
+    p_nombre OUT VARCHAR2,
+    p_dosis OUT VARCHAR2,
+    p_cantidad OUT INT,
+    p_precio OUT DECIMAL,
+    p_resultado OUT VARCHAR2
+) AS
+BEGIN
+    UPDATE Medicamentos
+    SET nombre = p_nombre,
+        dosis = p_dosis,
+        cantidad = p_cantidad,
+        precio = p_precio
+    WHERE id_medicamento = p_id_medicamento ;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Medicamento actualizado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: Medicamento no encontrado para actualizar';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END SP_ACTUALIZAR_MEDICAMENTO;
+
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_MEDICAMENTO (
+    p_id_medicamento IN INT,
+    p_resultado OUT VARCHAR2
+) AS
+BEGIN
+    DELETE FROM Medicamentos
+    WHERE id_medicamento = p_id_medicamento;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        p_resultado := 'EXITO: Medicamento eliminado exitosamente';
+    ELSE
+        p_resultado := 'ERROR: No se encontró ningún medicamento con el ID ' || p_id_medicamento;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END SP_ELIMINAR_MEDICAMENTO ;
 
 
 --Procedimiento almacenado con cursor incluido
@@ -900,22 +971,6 @@ BEGIN
 
 END ObtenerMedicamentosPorNombre;
 
-
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.BorrarMedicamento (
-    p_id_medicamento IN INT
-) AS
-BEGIN
-    -- Realizar la eliminaci�n del medicamento
-    DELETE FROM Medicamentos
-    WHERE id_medicamento = p_id_medicamento;
-
-    -- Comprobar si se elimin� alg�n registro
-    IF SQL%ROWCOUNT > 0 THEN
-        DBMS_OUTPUT.PUT_LINE('El medicamento con ID ' || p_id_medicamento || ' ha sido eliminado exitosamente.');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('No se encontr� ning�n medicamento con el ID ' || p_id_medicamento);
-    END IF;
-END BorrarMedicamento;
   
 --PRODUCTOS 
  CREATE TABLE C##HospitalExpress.Productos (
@@ -1307,7 +1362,7 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PRODUCTOS (
 AS 
 BEGIN
     OPEN p_cursor FOR
-        SELECT * FROM C##HospitalExpress.Productos;
+        SELECT * FROM C##HospitalExpress.Productos ORDER BY id_producto ASC;
 
     p_resultado := 'EXITO';
 EXCEPTION
@@ -1335,3 +1390,19 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 /
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_MEDICAMENTOS (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM C##HospitalExpress.Medicamentos ORDER BY id_medicamento ASC;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron medicamentos';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;

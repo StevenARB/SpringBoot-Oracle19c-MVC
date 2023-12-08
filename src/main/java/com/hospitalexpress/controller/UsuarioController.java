@@ -89,7 +89,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/usuario/actualizar/{id}")
-    public String insertarUsuario(Model model, @PathVariable Integer id, @ModelAttribute Usuario usuario) {
+    public String actualizarUsuario(Model model, @PathVariable Integer id, @ModelAttribute Usuario usuario) {
         try {
             String result = usuarioService.actualizarUsuario(id, usuario.getUsername(), usuario.getPassword(), usuario.getRol(), usuario.getEstado());
             model.addAttribute("resultado", result);

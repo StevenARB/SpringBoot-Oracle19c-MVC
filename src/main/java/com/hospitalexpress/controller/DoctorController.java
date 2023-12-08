@@ -47,22 +47,55 @@ public String findDoctores(Model model) {
     return "doctor/doctores";
 }
 
-    
-    
-     @GetMapping("/doctor/insertar")
-    public String mostrarFormulario(Model model) {
+    @GetMapping("/doctor/insertar")
+    public String insertarDoctor(Model model) {
         model.addAttribute("doctor", new Doctor());
-
         return "doctor/insertar";
     }
 
     @PostMapping("/doctor/insertar")
-    public String insertarDoctor(@ModelAttribute Doctor doctor, Model model) {
-        doctorService.insertarDoctor(doctor.getNombre(), doctor.getDireccion(), doctor.getTelefono(), doctor.getEstado());
-        model.addAttribute("mensaje", "Doctor insertado exitosamente");
-
+    public String insertarDoctor(Model model, @ModelAttribute Doctor doctor) {
+        try {
+            String result = doctorService.insertarDoctor(
+                doctor.getNombre(),
+                doctor.getDireccion(),
+                doctor.getTelefono(),
+                doctor.getEstado()
+            );
+            model.addAttribute("resultado", result);
+        } catch (Exception e) {
+            model.addAttribute("error", true);
+        }
         return "doctor/insertar";
     }
+
+    
+    @GetMapping("/doctor/actualizar/{id}")
+public String findDoctorByIdToUpdate(Model model, @PathVariable Integer id) {
+    try {
+        Doctor doctor = doctorService.getDoctorById(id);
+        if (doctor != null) {
+            model.addAttribute("doctor", doctor);
+        } else {
+            model.addAttribute("doctorNoEncontrado", true);
+        }
+    } catch (Exception e) {
+        model.addAttribute("doctorNoEncontrado", true);
+    }
+    return "doctor/actualizar";
+}
+
+@PostMapping("/doctor/actualizar/{id}")
+public String actualizarDoctor(Model model, @PathVariable Integer id, @ModelAttribute Doctor doctor) {
+    try {
+        String result = doctorService.actualizarDoctor(id, doctor.getNombre(), doctor.getDireccion(), doctor.getTelefono(), doctor.getEstado());
+        model.addAttribute("resultado", result);
+    } catch (Exception e) {
+        model.addAttribute("error", true);
+    }
+    return "redirect:/doctores";
+}
+
     
     @GetMapping("/doctor/eliminar/{id}")
 public String eliminarDoctor(Model model, @PathVariable Integer id) {

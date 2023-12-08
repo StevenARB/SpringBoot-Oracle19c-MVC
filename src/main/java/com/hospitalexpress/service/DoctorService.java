@@ -75,17 +75,25 @@ public List<Doctor> getDoctores() {
     }
 }
 
-    
-     @Transactional
-    public void insertarDoctor(String nombre, String direccion, String telefono, String estado) {
-        try {
-            String resultado = null; 
-            doctorRepository.InsertarDoctor(nombre, direccion, telefono, estado, resultado);
-        } catch (Exception e) {
-            
-        }
+@Transactional
+public String actualizarDoctor(Integer id, String nombre, String direccion, String telefono, String estado) {
+    try {
+        String result = doctorRepository.actualizarDoctor(id, nombre, direccion, telefono, estado);
+        return result;
+    } catch (Exception e) {
+        return null;
     }
-    
+}
+
+@Transactional
+public String insertarDoctor(String nombre, String direccion, String telefono, String estado) {
+    try {
+        String result = doctorRepository.insertarDoctor(nombre, direccion, telefono, estado);
+        return result;
+    } catch (Exception e) {
+        return null;
+    }
+}
     
     
     

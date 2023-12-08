@@ -112,7 +112,8 @@ public class UsuarioService {
     }
 
     @Transactional
-    public String actualizarUsuario(Integer id, String username, String password, String rol, String estado) {
+    public String actualizarUsuario(Integer id, 
+            String username, String password, String rol, String estado) {
         try {
             String result = usuarioRepository.actualizarUsuario(id, username, password, rol, estado);
             return result;

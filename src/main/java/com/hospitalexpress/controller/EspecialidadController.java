@@ -48,18 +48,24 @@ public String findEspecialidades(Model model) {
     return "especialidad/especialidades";
 }
 
-     @GetMapping("/especialidad/insertar")
-    public String mostrarFormulario(Model model) {
-        model.addAttribute("especialidad", new Especialidad());
-        return "especialidad/insertar";
-    }
+@GetMapping("/especialidad/insertar")
+public String insertarEspecialidad(Model model) {
+    model.addAttribute("especialidad", new Especialidad());
+    return "especialidad/insertar";
+}
 
-    @PostMapping("/especialidad/insertar")
-    public String insertarEspecialidad(@ModelAttribute Especialidad especialidad, Model model) {
-        especialidadService.insertarEspecialidad(especialidad.getNombre(), especialidad.getDescripcion());
-        model.addAttribute("mensaje", "Especialidad insertada exitosamente");
-        return "especialidad/insertar";
+@PostMapping("/especialidad/insertar")
+public String insertarEspecialidad(Model model, @ModelAttribute Especialidad especialidad) {
+    try {
+        String result = especialidadService.insertarEspecialidad(
+            especialidad.getNombre(),
+            especialidad.getDescripcion()
+        );
+        model.addAttribute("resultado", result);
+    } catch (Exception e) {
+        model.addAttribute("error", true);
     }
-    
+    return "especialidad/insertar";
+}
     
 }

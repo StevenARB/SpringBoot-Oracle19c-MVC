@@ -194,9 +194,13 @@
             <input type="text" class="form-control" id="telefono" name="telefono" required>
         </div>
         <div class="form-input-sm mt-3">
-            <label for="estado" class="form-label">Estado</label>
-            <input type="text" class="form-control" id="estado" name="estado" required>
-        </div>
+                        <label for="estado" class="form-label">Estado</label>
+                        <select class="form-select" aria-label="Default select example" id="estado" name="estado" required>
+                            <option selected disabled value="">Seleccionar Estado</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
         <div class="col-12">
             <button type="submit" class="btn btn-primary mt-5" name="insertarDoctor">Insertar Doctor</button>
         </div>
