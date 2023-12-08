@@ -44,6 +44,25 @@ import lombok.Setter;
     }
 )
 
+@NamedStoredProcedureQuery(
+    name = "Especialidad.actualizarEspecialidad",
+    procedureName = "SP_ACTUALIZAR_ESPECIALIDAD",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_especialidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_descripcion", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
+@NamedStoredProcedureQuery(
+    name = "Especialidad.eliminarEspecialidad",
+    procedureName = "SP_ELIMINAR_ESPECIALIDAD",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_especialidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
 
 public class Especialidad {
 

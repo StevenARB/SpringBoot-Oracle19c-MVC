@@ -50,7 +50,7 @@ import lombok.Setter;
     }
 )
 @NamedStoredProcedureQuery(
-    name = "Medicamento.ActualizarMedicamento",
+    name = "Medicamento.actualizarMedicamento",
     procedureName = "SP_ACTUALIZAR_MEDICAMENTO",
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_medicamento", type = Integer.class),
@@ -62,7 +62,7 @@ import lombok.Setter;
     }
 )
 @NamedStoredProcedureQuery(
-    name = "Medicamento.EliminarMedicamento",
+    name = "Medicamento.eliminarMedicamento",
     procedureName = "SP_ELIMINAR_MEDICAMENTO",
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_medicamento", type = Integer.class),

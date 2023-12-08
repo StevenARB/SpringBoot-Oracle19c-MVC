@@ -67,5 +67,42 @@ public String insertarEspecialidad(Model model, @ModelAttribute Especialidad esp
     }
     return "especialidad/insertar";
 }
+
+@GetMapping("/especialidad/actualizar/{id}")
+public String findEspecialidadByIdToUpdate(Model model, @PathVariable Integer id) {
+    try {
+        Especialidad especialidad = especialidadService.getEspecialidadById(id);
+        if (especialidad != null) {
+            model.addAttribute("especialidad", especialidad);
+        } else {
+            model.addAttribute("especialidadNoEncontrada", true);
+        }
+    } catch (Exception e) {
+        model.addAttribute("especialidadNoEncontrada", true);
+    }
+    return "especialidad/actualizar";
+}
+
+@PostMapping("/especialidad/actualizar/{id}")
+public String actualizarEspecialidad(Model model, @PathVariable Integer id, @ModelAttribute Especialidad especialidad) {
+    try {
+        String result = especialidadService.actualizarEspecialidad(id, especialidad.getNombre(), especialidad.getDescripcion());
+        model.addAttribute("resultado", result);
+    } catch (Exception e) {
+        model.addAttribute("error", true);
+    }
+    return "redirect:/especialidades";
+}
+
+@GetMapping("/especialidad/eliminar/{id}")
+public String eliminarEspecialidad(Model model, @PathVariable Integer id) {
+    try {
+        String result = especialidadService.eliminarEspecialidad(id);
+        model.addAttribute("resultado", result);
+    } catch (Exception e) {
+        model.addAttribute("error", true);
+    }
+    return "redirect:/especialidades";
+}
     
 }

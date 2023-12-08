@@ -21,4 +21,16 @@ String insertarEspecialidad(
     
             @Procedure(name = "Especialidad.getEspecialidades")
 List<Object[]> getEspecialidades();
+
+@Procedure(name = "Especialidad.actualizarEspecialidad")
+String actualizarEspecialidad(
+        @Param("p_id_especialidad") Integer id,
+        @Param("p_nombre") String nombre,
+        @Param("p_descripcion") String descripcion
+);
+
+@Procedure(name = "Especialidad.eliminarEspecialidad")
+String eliminarEspecialidad(@Param("p_id_especialidad") Integer id);
+
+
 }
