@@ -50,14 +50,14 @@ public List<Producto> getProductos() {
             BigDecimal idProducto = (BigDecimal) result[0];
             String nombre = (String) result[1];
             String descripcion = (String) result[2];
-            Integer cantidad = (Integer) result[3];
+            BigDecimal cantidad = (BigDecimal) result[3];
             BigDecimal precio = (BigDecimal) result[4];
 
             Producto producto = new Producto();
             producto.setId(idProducto.intValue());
             producto.setNombre(nombre);
             producto.setDescripcion(descripcion);
-            producto.setCantidad(cantidad);
+            producto.setCantidad(cantidad.intValue());
             producto.setPrecio(precio);
 
             productos.add(producto);

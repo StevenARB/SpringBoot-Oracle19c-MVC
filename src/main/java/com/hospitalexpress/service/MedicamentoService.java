@@ -33,17 +33,17 @@ public class MedicamentoService {
             List<Medicamento> medicamentos = new ArrayList<>();
 
             for (Object[] result : resultList) {
-                Integer id = (Integer) result[0];
+                BigDecimal id = (BigDecimal) result[0];
                 String nombre = (String) result[1];
                 String dosis = (String) result[2];
-                Integer cantidad = (Integer) result[3];
+                BigDecimal cantidad = (BigDecimal) result[3];
                 BigDecimal precio = (BigDecimal) result[4];
 
                 Medicamento medicamento = new Medicamento();
                 medicamento.setId(id.intValue());
                 medicamento.setNombre(nombre);
                 medicamento.setDosis(dosis);
-                medicamento.setCantidad(cantidad);
+                medicamento.setCantidad(cantidad.intValue());
                 medicamento.setPrecio(precio);
 
                 medicamentos.add(medicamento);
