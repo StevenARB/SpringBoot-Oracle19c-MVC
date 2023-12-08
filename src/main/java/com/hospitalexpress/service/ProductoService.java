@@ -40,7 +40,7 @@ private ProductoRepository productoRepository;
         }
     }
 
-    @Transactional(readOnly = true)
+ @Transactional(readOnly = true)
 public List<Producto> getProductos() {
     try {
         List<Object[]> resultList = productoRepository.getProductos();
@@ -73,7 +73,7 @@ public List<Producto> getProductos() {
         return null;
     }
 }
-  
+
     @Transactional
     public void insertarProducto(String nombre, String descripcion, Integer cantidad, BigDecimal precio) {
         try {

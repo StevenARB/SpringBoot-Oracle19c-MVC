@@ -34,7 +34,6 @@ import lombok.Setter;
 @NamedStoredProcedureQuery(
     name = "Producto.getProductos",
     procedureName = "C##HospitalExpress.SP_CONSULTAR_PRODUCTOS",
-    resultClasses = Producto.class,
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cursor", type = Object.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
