@@ -42,7 +42,7 @@ import lombok.Setter;
 
 
 @NamedStoredProcedureQuery(
-    name = "Producto.InsertarProducto",
+    name = "Producto.insertarProducto",
     procedureName = "SP_INSERTAR_PRODUCTOS",
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),

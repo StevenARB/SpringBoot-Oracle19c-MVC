@@ -40,7 +40,7 @@ public class MedicamentoService {
                 BigDecimal precio = (BigDecimal) result[4];
 
                 Medicamento medicamento = new Medicamento();
-                medicamento.setId(id);
+                medicamento.setId(id.intValue());
                 medicamento.setNombre(nombre);
                 medicamento.setDosis(dosis);
                 medicamento.setCantidad(cantidad);

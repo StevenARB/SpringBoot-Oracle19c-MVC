@@ -73,17 +73,15 @@ public List<Producto> getProductos() {
         return null;
     }
 }
-
-    @Transactional
-    public void insertarProducto(String nombre, String descripcion, Integer cantidad, BigDecimal precio) {
-        try {
-            String resultado = null; 
-            productoRepository.InsertarProducto(nombre, descripcion, cantidad, precio, resultado);
-        } catch (Exception e) {
-            
-        }
+@Transactional
+public String insertarProducto(String nombre, String descripcion, Integer cantidad, BigDecimal precio) {
+    try {
+        String result = productoRepository.insertarProducto(nombre, descripcion, cantidad, precio);
+        return result;
+    } catch (Exception e) {
+        return null;
     }
-    
+}
     
     @Transactional
 public String eliminarProducto(Integer id) {

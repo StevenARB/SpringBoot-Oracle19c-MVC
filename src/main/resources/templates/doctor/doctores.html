@@ -198,7 +198,7 @@
             <td th:text="${doctor.telefono}"></td>
             <td th:text="${doctor.estado}"></td>
             <td>
-                <button class="btn btn-outline-warning" onclick="">Actualizar</button>
+                <a th:href="@{/doctor/actualizar/{id}(id=${doctor.id})}" type="button" class="btn btn-outline-warning">Actualizar</a>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" th:data-bs-target="'#modalEliminar' + ${doctor.id}">Eliminar</button>
                 <div class="modal fade" th:id="'modalEliminar' + ${doctor.id}" tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">

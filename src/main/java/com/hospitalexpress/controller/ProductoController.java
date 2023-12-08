@@ -42,22 +42,28 @@ public String findProductos(Model model) {
     }
     return "producto/productos";
 }
+ 
+@GetMapping("/producto/insertar")
+public String insertarProducto(Model model) {
+    model.addAttribute("producto", new Producto());
+    return "producto/insertar";
+}
 
-    
-    @GetMapping("/producto/insertar")
-    public String mostrarFormulario(Model model) {
-        model.addAttribute("producto", new Producto());
-
-        return "producto/insertar";
+@PostMapping("/producto/insertar")
+public String insertarProducto(Model model, @ModelAttribute Producto producto) {
+    try {
+        String result = productoService.insertarProducto(
+            producto.getNombre(),
+            producto.getDescripcion(),
+            producto.getCantidad(),
+            producto.getPrecio()
+        );
+        model.addAttribute("resultado", result);
+    } catch (Exception e) {
+        model.addAttribute("error", true);
     }
-
-    @PostMapping("/producto/insertar")
-    public String insertarProducto(@ModelAttribute Producto producto, Model model) {
-        productoService.insertarProducto(producto.getNombre(), producto.getDescripcion(), producto.getCantidad(), producto.getPrecio());
-        model.addAttribute("mensaje", "Producto insertado exitosamente");
-
-        return "producto/insertar";
-    }
+    return "producto/insertar";
+}
     
     @GetMapping("/producto/eliminar/{idProducto}")
 public String eliminarProducto(Model model, @PathVariable Integer idProducto) {

@@ -70,15 +70,15 @@ public List<Especialidad> getEspecialidades() {
 }
 
     
-     @Transactional
-    public void insertarEspecialidad(String nombre, String descripcion) {
-        try {
-            String resultado = null; 
-            especialidadRepository.InsertarEspecialidad(nombre, descripcion, resultado);
-        } catch (Exception e) {
-
-        }
+@Transactional
+public String insertarEspecialidad(String nombre, String descripcion) {
+    try {
+        String result = especialidadRepository.insertarEspecialidad(nombre, descripcion);
+        return result;
+    } catch (Exception e) {
+        return null;
     }
+}
     
     
 }
