@@ -537,8 +537,6 @@ END;
 
 --PROCEDIMIENTO ALMACENADO DE CITA INSERTtest
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_CITA (
-    p_id_cita IN INTEGER,
-    p_id_doctor IN INTEGER,
     p_id_paciente IN INTEGER,
     p_tipo IN VARCHAR2,
     p_fecha_hora IN DATE,
@@ -548,11 +546,9 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_CITA (
 AS 
 BEGIN
     INSERT INTO
-        Cita (id_cita, id_doctor, id_paciente, tipo, fecha_hora, estado)
+        Cita (id_paciente, tipo, fecha_hora, estado)
     VALUES
         (
-            p_id_cita,
-            p_id_doctor,
             p_id_paciente,
             p_tipo,
             p_fecha_hora,
