@@ -4,11 +4,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin - Doctores</title>
+        <title>Admin - Usuarios</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-        <link rel="stylesheet" href="../assets/css/admin.css">
+        <link rel="stylesheet" href="/assets/css/admin.css">
+        <link rel="stylesheet" href="/assets/css/usuario.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-        <script src="../assets/js/admin.js"></script>
+        <script src="/assets/js/admin.js"></script>
     </head>
 
     <body>
@@ -151,7 +152,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/doctores">
+                                <a class="nav-link d-flex align-items-center gap-2" href="#">
                                     <svg class="bi">
                                     <use xlink:href="#file-earmark" />
                                     </svg>
@@ -175,53 +176,40 @@
                     </div>
                 </div>
             </div>
+
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Lista de Especialidades</h1>
-        <a href="/especialidad/insertar" class="btn btn-primary" id="buttonNuevaEspecialidad" type="button">Nueva Especialidad</a>
+        <h1 class="h2">Actualizar Medicamento</h1>
+        <a href="/medicamentos" class="btn btn-success" id="buttonListaMedicamentos" type="button">Lista de Medicamentos</a>
     </div>
-    <table class="table table-hover" th:if="${especialidades != null}" border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tr th:each="especialidad : ${especialidades}">
-            <td th:text="${especialidad.id}"></td>
-            <td th:text="${especialidad.nombre}"></td>
-            <td th:text="${especialidad.descripcion}"></td>
-            <td>
-                <a th:href="@{'/especialidad/actualizar/' + ${especialidad.id}}" class="btn btn-outline-warning">Actualizar</a>
-                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" th:data-bs-target="'#modalEliminar' + ${especialidad.id}">Eliminar</button>
-                <div class="modal fade" th:id="'modalEliminar' + ${especialidad.id}" tabindex="-1">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Eliminar Especialidad</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-                                <p style="font-size: 1.2rem;">¿Seguro de Eliminar esta Especialidad?</p>
-                                <h2 th:text="${especialidad.nombre}"></h2>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <a th:href="@{'/especialidad/eliminar/' + ${especialidad.id}}" type="button" class="btn btn-danger">Eliminar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <form th:if="${medicamento != null}" class="column" method="post">
+        <div class="form-input-sm mt-3">
+            <label for="nombre" class="form-label">Nombre del Medicamento</label>
+            <input th:value="${medicamento.nombre}" type="text" class="form-control" id="nombre" name="nombre" required>
+        </div>
+        <div class="form-input-sm mt-3">
+            <label for="dosis" class="form-label">Dosis</label>
+            <input th:value="${medicamento.dosis}" type="text" class="form-control" id="dosis" name="dosis" required>
+        </div>
+        <div class="form-input-sm mt-3">
+            <label for="cantidad" class="form-label">Cantidad</label>
+            <input th:value="${medicamento.cantidad}" type="number" class="form-control" id="cantidad" name="cantidad" required>
+        </div>
+        <div class="form-input-sm mt-3">
+            <label for="precio" class="form-label">Precio</label>
+            <input th:value="${medicamento.precio}" type="text" class="form-control" id="precio" name="precio" required>
+        </div>
 
-    <h1 th:if="${listaVacia}">No se encontraron Especialidades en el Sistema</h1>
+        <div class="form-input-sm d-flex justify-content-between align-items-center mt-5">
+            <button type="submit" class="btn btn-warning px-4" name="actualizarMedicamento">Actualizar</button>
+            <a href="/medicamentos" class="btn btn-secondary px-4" type="button">Cancelar</a>
+        </div>
+    </form>
 </main>
+
         </div>
     </div>
+        <script src="/assets/js/password.js"></script>
 </body>
 
 </html>

@@ -62,6 +62,18 @@ import lombok.Setter;
     }
 )
 
+@NamedStoredProcedureQuery(
+    name = "Producto.actualizarProducto",
+    procedureName = "SP_ACTUALIZAR_PRODUCTOS",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_producto", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_descripcion", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_cantidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_precio", type = BigDecimal.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
 
 public class Producto {
 

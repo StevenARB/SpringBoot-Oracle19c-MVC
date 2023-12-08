@@ -79,6 +79,26 @@ public String insertarEspecialidad(String nombre, String descripcion) {
         return null;
     }
 }
-    
+ 
+@Transactional
+public String eliminarEspecialidad(Integer id) {
+    try {
+        String result = especialidadRepository.eliminarEspecialidad(id);
+        return result;
+    } catch (Exception e) {
+        return null;
+    }
+}
+
+@Transactional
+public String actualizarEspecialidad(Integer id, String nombre, String descripcion) {
+    try {
+        String result = especialidadRepository.actualizarEspecialidad(id, nombre, descripcion);
+        return result;
+    } catch (Exception e) {
+        return null;
+    }
+}
+
     
 }
