@@ -33,7 +33,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/usuario/insertar")
-    public String insertarProducto(Model model, @ModelAttribute Usuario usuario) {
+    public String insertarUsuario(Model model, @ModelAttribute Usuario usuario) {
         try {
             String result = usuarioService.insertarUsuario(usuario.getUsername(), usuario.getPassword(), usuario.getRol(), usuario.getEstado());
             model.addAttribute("resultado", result);
@@ -71,6 +71,32 @@ public class UsuarioController {
             model.addAttribute("usuarioNoEncontrado", true);
         }
         return "usuarios";
+    }
+
+    @GetMapping("/usuario/actualizar/{id}")
+    public String findUsuarioByIdToUpdate(Model model, @PathVariable Integer id) {
+        try {
+            Usuario usuario = usuarioService.getUsuarioById(id);
+            if (usuario != null) {
+                model.addAttribute("usuario", usuario);
+            } else {
+                model.addAttribute("usuarioNoEncontrado", true);
+            }
+        } catch (Exception e) {
+            model.addAttribute("usuarioNoEncontrado", true);
+        }
+        return "usuario/actualizar";
+    }
+
+    @PostMapping("/usuario/actualizar/{id}")
+    public String insertarUsuario(Model model, @PathVariable Integer id, @ModelAttribute Usuario usuario) {
+        try {
+            String result = usuarioService.actualizarUsuario(id, usuario.getUsername(), usuario.getPassword(), usuario.getRol(), usuario.getEstado());
+            model.addAttribute("resultado", result);
+        } catch (Exception e) {
+            model.addAttribute("error", true);
+        }
+        return "redirect:/usuarios";
     }
 
     @GetMapping("/usuario/eliminar/{username}")
