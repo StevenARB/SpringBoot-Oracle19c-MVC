@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="auto">
+<html lang="es" data-bs-theme="auto" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin</title>
+        <title>Admin - Especialidades</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <link rel="stylesheet" href="../assets/css/admin.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+        <script src="../assets/js/admin.js"></script>
     </head>
 
     <body>
@@ -180,14 +182,6 @@
                                     Medicamentos
                                 </a>
                             </li>
-                             <li class="nav-item">
-                               <a class="nav-link d-flex align-items-center gap-2" href="tratamientos">
-                                    <svg class="bi">
-                                    <use xlink:href="#file-earmark" />
-                                    </svg>
-                                    Tratamientos
-                                </a>
-                            </li>
                         </ul>
 
                         <hr class="my-3">
@@ -205,16 +199,55 @@
                     </div>
                 </div>
             </div>
-
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Dashboard</h1>
+            
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Lista de Tratamientos</h1>
+        <a href="/tratamiento/insertar" class="btn btn-primary" id="buttonNuevoTratamiento" type="button">Nuevo Tratamiento</a>
+    </div>
+    <table class="table table-hover" th:if="${tratamientos != null}" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tr th:each="tratamiento : ${tratamientos}">
+            <td th:text="${tratamiento.id}"></td>
+            <td th:text="${tratamiento.nombre}"></td>
+            <td th:text="${tratamiento.descripcion}"></td>
+            <td>
+                <a th:href="@{'/tratamiento/actualizar/' + ${tratamiento.id}}" class="btn btn-outline-warning">Actualizar</a>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" th:data-bs-target="'#modalEliminar' + ${tratamiento.id}">Eliminar</button>
+                <div class="modal fade" th:id="'modalEliminar' + ${tratamiento.id}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Eliminar Tratamiento</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                                <p style="font-size: 1.2rem;">¿Seguro de Eliminar este Tratamiento?</p>
+                                <h2 th:text="${tratamiento.nombre}"></h2>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <a th:href="@{'/tratamiento/eliminar/' + ${tratamiento.id}}" type="button" class="btn btn-danger">Eliminar</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </main>
+            </td>
+        </tr>
+    </table>
+
+    <h1 th:if="${listaVacia}">No se encontraron Tratamientos en el Sistema</h1>
+</main>
+
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script src="../assets/js/admin.js"></script>
 </body>
 
 </html>

@@ -1455,3 +1455,113 @@ BEGIN
 
     RETURN ganancias_totales;
 END;
+
+
+
+
+/*--------------------Tratamientos--------------------*/
+
+--TABLA Tratamientos
+CREATE TABLE Tratamientos (
+    id_tratamiento INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    nombre VARCHAR2(100) NOT NULL,
+    descripcion VARCHAR2(255) NOT NULL
+);
+
+-- CREATE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_TRATAMIENTO (
+    p_nombre IN VARCHAR2,
+    p_descripcion IN VARCHAR2,
+    p_resultado OUT VARCHAR2
+)
+AS
+BEGIN
+    INSERT INTO Tratamientos (nombre, descripcion)
+    VALUES (p_nombre, p_descripcion);
+    
+    COMMIT;
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+-- READ
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_TRATAMIENTO (
+    p_id_tratamiento IN INT,
+    p_nombre OUT VARCHAR2,
+    p_descripcion OUT VARCHAR2,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT nombre, descripcion
+    INTO p_nombre, p_descripcion
+    FROM Tratamientos
+    WHERE id_tratamiento = p_id_tratamiento;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Tratamiento no encontrado';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_TRATAMIENTOS (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM C##HospitalExpress.Tratamientos;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron tratamientos';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+-- UPDATE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_TRATAMIENTO (
+    p_id_tratamiento IN NUMBER,
+    p_nombre IN VARCHAR2,
+    p_descripcion IN VARCHAR2,
+    p_resultado OUT VARCHAR2
+)
+AS
+BEGIN
+    UPDATE Tratamientos
+    SET nombre = p_nombre,
+        descripcion = p_descripcion
+    WHERE id_tratamiento = p_id_tratamiento;
+    
+    COMMIT;
+    p_resultado := 'EXITO: Tratamiento actualizado exitosamente';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+-- DELETE
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_TRATAMIENTO (
+    p_id_tratamiento IN NUMBER,
+    p_resultado OUT VARCHAR2
+)
+AS
+BEGIN
+    -- Eliminar de tratamientos
+    DELETE FROM Tratamientos WHERE id_tratamiento = p_id_tratamiento;
+    
+    COMMIT;
+    p_resultado := 'EXITO: Tratamiento eliminado exitosamente';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+
+
