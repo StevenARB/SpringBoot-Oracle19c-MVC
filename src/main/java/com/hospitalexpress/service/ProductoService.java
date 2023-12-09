@@ -40,6 +40,27 @@ private ProductoRepository productoRepository;
         }
     }
 
+        public Producto getProductoById(Integer id) {
+        try {
+            Map<String, Object> result = productoRepository.getProductoById(id);
+
+            if (result.get("p_resultado").equals("EXITO")) {
+                Producto producto = new Producto();
+                producto.setId(id);
+                producto.setNombre((String) result.get("p_nombre"));
+                producto.setDescripcion((String) result.get("p_descripcion"));
+                producto.setCantidad((Integer) result.get("p_cantidad"));
+                producto.setPrecio((BigDecimal) result.get("p_precio"));
+
+                return producto;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
  @Transactional(readOnly = true)
 public List<Producto> getProductos() {
     try {
@@ -83,7 +104,16 @@ public String insertarProducto(String nombre, String descripcion, Integer cantid
     }
 }
     
-    @Transactional
+@Transactional
+public String actualizarProducto(Integer idProducto, String nombre, String descripcion, Integer cantidad, BigDecimal precio) {
+    try {
+        return productoRepository.actualizarProducto(idProducto, nombre, descripcion, cantidad, precio);
+    } catch (Exception e) {
+        return null;
+    }
+}
+
+@Transactional
 public String eliminarProducto(Integer id) {
     try {
         String result = productoRepository.eliminarProducto(id);

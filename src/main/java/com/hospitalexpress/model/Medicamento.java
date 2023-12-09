@@ -54,10 +54,10 @@ import lombok.Setter;
     procedureName = "SP_ACTUALIZAR_MEDICAMENTO",
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_medicamento", type = Integer.class),
-        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_nombre", type = String.class),
-        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_dosis", type = String.class),
-        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_cantidad", type = Integer.class),
-        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_precio", type = BigDecimal.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_dosis", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_cantidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_precio", type = BigDecimal.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
     }
 )

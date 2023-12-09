@@ -992,6 +992,30 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PRODUCTO_ID (
+    p_id_producto IN INTEGER,
+    p_nombre OUT VARCHAR2,
+    p_descripcion OUT VARCHAR2,
+    p_cantidad OUT INT,
+    p_precio OUT DECIMAL,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    SELECT Nombre, Descripcion, Cantidad, Precio
+    INTO p_nombre, p_descripcion, p_cantidad, p_precio
+    FROM Productos
+    WHERE id_producto = p_id_producto;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: Producto no encontrado';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PRODUCTOS (
     p_cursor OUT SYS_REFCURSOR,
     p_resultado OUT VARCHAR2
@@ -1222,10 +1246,10 @@ END;
 --UPDATE
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_MEDICAMENTO (
     p_id_medicamento IN INT,
-    p_nombre OUT VARCHAR2,
-    p_dosis OUT VARCHAR2,
-    p_cantidad OUT INT,
-    p_precio OUT DECIMAL,
+    p_nombre IN VARCHAR2,
+    p_dosis IN VARCHAR2,
+    p_cantidad IN INT,
+    p_precio IN DECIMAL,
     p_resultado OUT VARCHAR2
 ) AS
 BEGIN

@@ -29,7 +29,7 @@ public interface MedicamentoRepository extends JpaRepository<Medicamento, Long>{
     @Procedure(name = "Medicamento.getMedicamentos")
     List<Object[]> getMedicamentos();
 
-    @Procedure(name = "Medicamento.ActualizarMedicamento")
+    @Procedure(name = "Medicamento.actualizarMedicamento")
     String actualizarMedicamento(
         @Param("p_id_medicamento") Integer id_medicamento,
         @Param("p_nombre") String nombre,
@@ -39,7 +39,7 @@ public interface MedicamentoRepository extends JpaRepository<Medicamento, Long>{
     );
 
   
-    @Procedure(name = "Medicamento.EliminarMedicamento")
+    @Procedure(name = "Medicamento.eliminarMedicamento")
     String eliminarMedicamento(@Param("p_id_medicamento") Integer id_medicamento);
 }
 
