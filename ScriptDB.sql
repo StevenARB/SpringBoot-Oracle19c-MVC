@@ -18,7 +18,7 @@ GRANT DBA TO C##HospitalExpress;
 --TABLA Usuarios
 CREATE TABLE C##HospitalExpress.Usuarios (
     id_usuario INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    username VARCHAR2(255) UNIQUE,
+    email VARCHAR2(255) UNIQUE,
     password VARCHAR2(255),
     rol VARCHAR2(25),
     estado VARCHAR2(25)
@@ -27,7 +27,7 @@ CREATE TABLE C##HospitalExpress.Usuarios (
 --CRUD Usuarios
 --CREATE
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_USUARIO (
-    p_username IN VARCHAR2,
+    p_email IN VARCHAR2,
     p_password IN VARCHAR2,
     p_rol IN VARCHAR2,
     p_estado IN VARCHAR2,
@@ -36,10 +36,10 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_USUARIO (
 AS 
 BEGIN
     INSERT INTO
-        usuarios (username, password, rol, estado)
+        usuarios (email, password, rol, estado)
     VALUES
         (
-            p_username,
+            p_email,
             p_password,
             p_rol,
             p_estado
@@ -70,7 +70,7 @@ END;
 
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO_ID (
     p_id_usuario IN INTEGER,
-    p_username OUT VARCHAR2,
+    p_email OUT VARCHAR2,
     p_password OUT VARCHAR2,
     p_rol OUT VARCHAR2,
     p_estado OUT VARCHAR2,
@@ -78,8 +78,8 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO_ID (
 ) 
 AS 
 BEGIN
-    SELECT username, password, rol, estado
-    INTO p_username, p_password, p_rol, p_estado
+    SELECT email, password, rol, estado
+    INTO p_email, p_password, p_rol, p_estado
     FROM usuarios
     WHERE id_usuario = p_id_usuario;
 
@@ -91,8 +91,8 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO_USERNAME (
-    p_username IN VARCHAR2,
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_USUARIO_EMAIL (
+    p_email IN VARCHAR2,
     p_id_usuario OUT INTEGER,
     p_rol OUT VARCHAR2,
     p_estado OUT VARCHAR2,
@@ -103,7 +103,7 @@ BEGIN
     SELECT id_usuario, rol, estado
     INTO p_id_usuario, p_rol, p_estado
     FROM usuarios
-    WHERE username = p_username;
+    WHERE email = p_email;
 
     p_resultado := 'EXITO';
 EXCEPTION
@@ -116,7 +116,7 @@ END;
 --UPDATE
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_USUARIO (
     p_id_usuario IN INTEGER,
-    p_username IN VARCHAR2,
+    p_email IN VARCHAR2,
     p_password IN VARCHAR2,
     p_rol IN VARCHAR2,
     p_estado IN VARCHAR2,
@@ -125,7 +125,7 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_USUARIO (
 AS 
 BEGIN
     UPDATE usuarios
-    SET username = p_username,
+    SET email = p_email,
         password = p_password,
         rol = p_rol,
         estado = p_estado
@@ -143,13 +143,13 @@ END;
 
 --DELETE
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_USUARIO (
-    p_username IN VARCHAR2,
+    p_email IN VARCHAR2,
     p_resultado OUT VARCHAR2
 ) 
 AS 
 BEGIN
     DELETE FROM usuarios
-    WHERE username = p_username;
+    WHERE email = p_email;
 
     IF SQL%ROWCOUNT > 0 THEN
         p_resultado := 'EXITO: Usuario eliminado exitosamente';
@@ -162,7 +162,7 @@ EXCEPTION
 END;
 
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_USUARIO_PACIENTE (
-    p_username IN VARCHAR2,
+    p_email IN VARCHAR2,
     p_resultado OUT VARCHAR2
 ) 
 AS 
@@ -171,7 +171,7 @@ AS
     CURSOR c_usuario IS
         SELECT id_usuario
         FROM usuarios
-        WHERE username = p_username;
+        WHERE email = p_email;
 BEGIN
     --Se obtiene el Id del Usuario mediante un Cursor
     OPEN c_usuario;
@@ -183,7 +183,7 @@ BEGIN
         WHERE id_usuario = v_id_usuario;
 
         DELETE FROM usuarios
-        WHERE username = p_username;
+        WHERE email = p_email;
 
         p_resultado := 'EXITO: Usuario y paciente asociado eliminados exitosamente';
     ELSE
@@ -219,10 +219,13 @@ END;
 CREATE TABLE C##HospitalExpress.Pacientes (
     id_paciente INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     nombre VARCHAR2(50) NOT NULL,
+    primer_apellido VARCHAR2(50) NOT NULL,
+    segundo_apellido VARCHAR2(50) NOT NULL,
+    email VARCHAR2(255) NOT NULL,
     direccion VARCHAR2(255) NOT NULL,
     genero VARCHAR2(50) NOT NULL,
     fecha_nac DATE NOT NULL,
-    id_usuario INTEGER NOT NULL,
+    id_usuario INTEGER,
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
 
@@ -230,6 +233,9 @@ CREATE TABLE C##HospitalExpress.Pacientes (
 --CREATE
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_PACIENTE (
     p_nombre IN VARCHAR2,
+    p_primer_apellido IN VARCHAR2,
+    p_segundo_apellido IN VARCHAR2,
+    p_email IN VARCHAR2,
     p_direccion IN VARCHAR2,
     p_genero IN VARCHAR2,
     p_fecha_nac IN DATE,
@@ -239,10 +245,13 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_PACIENTE (
 AS 
 BEGIN
     INSERT INTO
-        pacientes (nombre, direccion, genero, fecha_nac, id_usuario)
+        pacientes (nombre, primer_apellido, segundo_apellido, email, direccion, genero, fecha_nac, id_usuario)
     VALUES
         (
             p_nombre,
+            p_primer_apellido,
+            p_segundo_apellido,
+            p_email,
             p_direccion,
             p_genero,
             p_fecha_nac,
@@ -255,18 +264,22 @@ EXCEPTION
 END;
 
 --READ
-CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PACIENTE (
-    p_id_paciente IN VARCHAR2,
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PACIENTE_ID (
+    p_id_paciente IN INTEGER,
     p_nombre OUT VARCHAR2,
+    p_primer_apellido OUT VARCHAR2,
+    p_segundo_apellido OUT VARCHAR2,
+    p_email OUT VARCHAR2,
     p_direccion OUT VARCHAR2,
     p_genero OUT VARCHAR2,
     p_fecha_nac OUT VARCHAR2,
+    p_id_usuario OUT VARCHAR2,
     p_resultado OUT VARCHAR2
 ) 
 AS 
 BEGIN
-    SELECT nombre, direccion, genero, fecha_nac
-    INTO p_nombre, p_direccion, p_genero, p_fecha_nac
+    SELECT nombre, primer_apellido, segundo_apellido, email, direccion, genero, fecha_nac, id_usuario
+    INTO p_nombre, p_primer_apellido, p_segundo_apellido, p_email, p_direccion, p_genero, p_fecha_nac, p_id_usuario
     FROM pacientes
     WHERE id_paciente = p_id_paciente;
 
@@ -278,22 +291,47 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PACIENTES (
+    p_cursor OUT SYS_REFCURSOR,
+    p_resultado OUT VARCHAR2
+) 
+AS 
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM pacientes ORDER BY id_paciente ASC;
+
+    p_resultado := 'EXITO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_resultado := 'ERROR: No se encontraron usuarios';
+    WHEN OTHERS THEN
+        p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
 --UPDATE
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_PACIENTE (
     p_id_paciente IN INTEGER,
-    p_nuevo_nombre IN VARCHAR2,
-    p_nuevo_direccion IN VARCHAR2,
-    p_nuevo_genero IN VARCHAR2,
-    p_nuevo_fecha_nac IN DATE,
+    p_nombre IN VARCHAR2,
+    p_primer_apellido IN VARCHAR2,
+    p_segundo_apellido IN VARCHAR2,
+    p_email IN VARCHAR2,
+    p_direccion IN VARCHAR2,
+    p_genero IN VARCHAR2,
+    p_fecha_nac IN VARCHAR2,
+    p_id_usuario IN INTEGER,
     p_resultado OUT VARCHAR2
 ) 
 AS 
 BEGIN
     UPDATE pacientes
-    SET nombre = p_nuevo_nombre,
-        direccion = p_nuevo_direccion,
-        genero = p_nuevo_genero,
-        fecha_nac = p_nuevo_fecha_nac
+    SET nombre = p_nombre,
+        primer_apellido = p_primer_apellido,
+        segundo_apellido = p_segundo_apellido,
+        email = p_email,
+        direccion = p_direccion,
+        genero = p_genero,
+        fecha_nac = p_fecha_nac,
+        id_usuario = p_id_usuario
     WHERE id_paciente = p_id_paciente;
 
     IF SQL%ROWCOUNT > 0 THEN
@@ -313,8 +351,8 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_PACIENTE (
 ) 
 AS 
 BEGIN
-        DELETE FROM C##HospitalExpress.Pacientes
-        WHERE id_paciente = p_id_paciente;
+    DELETE FROM C##HospitalExpress.Pacientes
+    WHERE id_paciente = p_id_paciente;
     IF SQL%ROWCOUNT > 0 THEN
         p_resultado := 'EXITO: Paciente eliminado exitosamente';
     ELSE
@@ -325,25 +363,20 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
-DECLARE
-    resultado VARCHAR2(255);
-BEGIN
-    C##HospitalExpress.SP_ELIMINAR_PACIENTE(4, resultado);
-    DBMS_OUTPUT.PUT_LINE(resultado);
-END;
-
 --VIEW Usuarios Pacientes
 CREATE OR REPLACE VIEW C##HospitalExpress.Vista_Usuarios_Pacientes AS
 SELECT
     U.id_usuario,
-    U.username,
+    U.email,
     U.rol,
     U.estado,
     P.id_paciente,
-    P.nombre AS paciente_nombre,
-    P.direccion AS paciente_direccion,
-    P.genero AS paciente_genero,
-    P.fecha_nac AS paciente_fecha_nac
+    P.nombre,
+    P.primer_apellido,
+    P.segundo_apellido,
+    P.direccion,
+    P.genero,
+    P.fecha_nac
 FROM
     Usuarios U
 JOIN
