@@ -1,0 +1,56 @@
+h1 {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 700;
+    font-size: 5rem;
+    color: var(--primary);
+}
+
+.icon-button {
+    margin-right: 0.5rem;
+}
+
+.link-button {
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 5rem 10rem;
+}
+
+.container-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 768px;
+    margin: auto;
+}
+
+.container-input {
+    width: 20rem;
+}
+
+.form-input-login {
+    font-size: 2rem;
+    width: 45rem;
+}
+
+.form-container-button {
+    display: flex;
+    justify-content: center;
+}
+
+.form-button-login {
+    font-size: 2.5rem;
+    color: var(--secondaryBackground);
+}
+
+.form-login-error {
+    font-size: 2rem;
+    color: var(--primary);
+}
+
