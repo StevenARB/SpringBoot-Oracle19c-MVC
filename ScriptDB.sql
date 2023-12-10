@@ -556,6 +556,18 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
+----------------------TRIGGER DOCTOR
+CREATE OR REPLACE TRIGGER TRG_BEFORE_DELETE_DOCTOR
+BEFORE DELETE ON C##HospitalExpress.Doctor
+FOR EACH ROW
+BEGIN
+    IF :OLD.estado = 'Activo' THEN
+        RAISE_APPLICATION_ERROR(-20001, 'No se puede eliminar un doctor activo. Desactívelo primero.');
+    END IF;
+END;
+/
+
+
 --VISTA DE DOCTORES
 CREATE OR REPLACE VIEW Vista_Doctores AS
 SELECT
@@ -1145,6 +1157,46 @@ SELECT
     precio
 FROM
     PRODUCTOS;
+
+
+----TRIGGER PRODUCTOS
+CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_PRODUCTOS
+BEFORE INSERT ON C##HospitalExpress.Productos
+FOR EACH ROW
+BEGIN
+    IF :NEW.Cantidad IS NULL THEN
+        :NEW.Cantidad := 0;
+    END IF;
+END;
+
+CREATE OR REPLACE TRIGGER tr_before_insert_producto
+BEFORE INSERT ON C##HospitalExpress.Productos
+FOR EACH ROW
+BEGIN
+    IF :NEW.Cantidad < 50 THEN
+        RAISE_APPLICATION_ERROR(-20012, 'No se puede insertar un producto con una cantidad inferior a 50.');
+    END IF;
+END;
+/
+
+
+CREATE OR REPLACE TRIGGER tr_before_insert_producto
+BEFORE INSERT ON C##HospitalExpress.Productos
+FOR EACH ROW
+DECLARE
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count
+    FROM C##HospitalExpress.Productos
+    WHERE UPPER(Nombre) = UPPER(:NEW.Nombre);
+
+    IF v_count > 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Ya existe un producto con el mismo nombre.');
+    END IF;
+END;
+/
+
+
 
 --CURSOR
 CREATE OR REPLACE PROCEDURE SP_Obtener_Productos_Precio (
