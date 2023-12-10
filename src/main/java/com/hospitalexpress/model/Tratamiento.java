@@ -11,13 +11,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Especialidades")
+@Table(name = "Tratamientos")
 @Getter
 @Setter
-
 @NamedStoredProcedureQuery(
-    name = "Especialidad.insertarEspecialidad",
-    procedureName = "SP_INSERTAR_ESPECIALIDAD",
+    name = "Tratamiento.insertarTratamiento",
+    procedureName = "C##HospitalExpress.SP_INSERTAR_TRATAMIENTO",
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_descripcion", type = String.class),
@@ -26,10 +25,10 @@ import lombok.Setter;
 )
 
 @NamedStoredProcedureQuery(
-    name = "Especialidad.getEspecialidadById",
-    procedureName = "C##HospitalExpress.SP_CONSULTAR_ESPECIALIDAD",
+    name = "Tratamiento.getTratamientoById",
+    procedureName = "C##HospitalExpress.SP_CONSULTAR_TRATAMIENTO",
     parameters = {
-        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_especialidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_tratamiento", type = Integer.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_nombre", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_descripcion", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
@@ -37,20 +36,19 @@ import lombok.Setter;
 )
 
 @NamedStoredProcedureQuery(
-    name = "Especialidad.getEspecialidades",
-    procedureName = "SP_CONSULTAR_ESPECIALIDADES",
+    name = "Tratamiento.getTratamientos",
+    procedureName = "C##HospitalExpress.SP_CONSULTAR_TRATAMIENTOS",
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cursor", type = Object.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
     }
 )
 
-
 @NamedStoredProcedureQuery(
-    name = "Especialidad.actualizarEspecialidad",
-    procedureName = "SP_ACTUALIZAR_ESPECIALIDAD",
+    name = "Tratamiento.actualizarTratamiento",
+    procedureName = "C##HospitalExpress.SP_ACTUALIZAR_TRATAMIENTO",
     parameters = {
-        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_especialidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_tratamiento", type = Integer.class),
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_descripcion", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
@@ -58,18 +56,18 @@ import lombok.Setter;
 )
 
 @NamedStoredProcedureQuery(
-    name = "Especialidad.eliminarEspecialidad",
-    procedureName = "SP_ELIMINAR_ESPECIALIDAD",
+    name = "Tratamiento.eliminarTratamiento",
+    procedureName = "C##HospitalExpress.SP_ELIMINAR_TRATAMIENTO",
     parameters = {
-        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_especialidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_tratamiento", type = Integer.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
     }
 )
 
-public class Especialidad {
-
+public class Tratamiento {
+    
     @Id
-    @Column(name = "id_especialidad")
+    @Column(name = "id")
     private Integer id;
 
     @Column(name = "nombre")
@@ -77,4 +75,6 @@ public class Especialidad {
 
     @Column(name = "descripcion")
     private String descripcion;
+    
+    
 }
