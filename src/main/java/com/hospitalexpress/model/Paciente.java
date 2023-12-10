@@ -4,85 +4,97 @@
  */
 package com.hospitalexpress.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
-import java.sql.Date;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedStoredProcedureQuery;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureParameter;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
  * @author retan
  */
+
 @Entity
-@Table(name = "pacientes", schema = "hospitalexpress")
+@Table(name = "pacientes")
+@Getter
+@Setter
+
+@NamedStoredProcedureQuery(name = "Paciente.insertarPaciente", procedureName = "SP_INSERTAR_PACIENTE", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_primer_apellido", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_segundo_apellido", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_email", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_direccion", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_genero", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_fecha_nac", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
+@NamedStoredProcedureQuery(name = "Paciente.getPacienteById", procedureName = "SP_CONSULTAR_PACIENTE_ID", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_paciente", type = Integer.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_nombre", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_primer_apellido", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_segundo_apellido", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_email", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_direccion", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_genero", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_fecha_nac", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
+@NamedStoredProcedureQuery(name = "Paciente.getPacientes", procedureName = "SP_CONSULTAR_PACIENTES", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cursor", type = Object.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
+@NamedStoredProcedureQuery(name = "Paciente.actualizarPaciente", procedureName = "SP_ACTUALIZAR_PACIENTE", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_paciente", type = Integer.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_primer_apellido", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_segundo_apellido", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_email", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_direccion", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_genero", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_fecha_nac", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
+@NamedStoredProcedureQuery(name = "Paciente.eliminarPaciente", procedureName = "SP_ELIMINAR_PACIENTE", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_email", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
+
 public class Paciente {
 
     @Id
-    private Integer id_paciente;
+    @Column(name = "id_paciente")
+    private Integer id;
 
-    private String nombre, direccion, genero, estado;
-    private Date fecha_nac;
+    @Column(name = "nombre")
+    private String nombre;
+    
+    @Column(name = "primer_apellido")
+    private String primerApellido;
+    
+    @Column(name = "segundo_apellido")
+    private String segundoApellido;
+    
+    @Column(name = "email")
+    private String email;
+    
+    @Column(name = "direccion")
+    private String direccion;
 
-    @OneToOne
+    @Column(name = "genero")
+    private String genero;
+
+    @Column(name = "fecha_nac")
+    private String fechaNac;
+
+    @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
-
-    public Integer getId_paciente() {
-        return id_paciente;
-    }
-
-    public void setId_paciente(Integer id_paciente) {
-        this.id_paciente = id_paciente;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
-    public String getGenero() {
-        return genero;
-    }
-
-    public void setGenero(String genero) {
-        this.genero = genero;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public Date getFecha_nac() {
-        return fecha_nac;
-    }
-
-    public void setFecha_nac(Date fecha_nac) {
-        this.fecha_nac = fecha_nac;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
 
 }

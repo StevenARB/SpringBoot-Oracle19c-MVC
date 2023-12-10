@@ -20,21 +20,21 @@ import org.springframework.stereotype.Repository;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Procedure(name = "Usuario.insertarUsuario")
-    String insertarUsuario(@Param("p_username") String username, @Param("p_password") String password, @Param("p_rol") String rol, @Param("p_estado") String estado);
+    String insertarUsuario(@Param("p_email") String email, @Param("p_password") String password, @Param("p_rol") String rol, @Param("p_estado") String estado);
 
     @Procedure(name = "Usuario.getUsuarioById")
-    Map<String, Object> getUsuarioById(@Param("p_id_usuario") Integer username);
+    Map<String, Object> getUsuarioById(@Param("p_id_usuario") Integer id);
 
-    @Procedure(name = "Usuario.getUsuarioByUsername")
-    Map<String, Object> getUsuarioByUsername(@Param("p_username") String username);
+    @Procedure(name = "Usuario.getUsuarioByEmail")
+    Map<String, Object> getUsuarioByEmail(@Param("p_email") String email);
 
     @Procedure(name = "Usuario.getUsuarios")
     List<Object[]> getUsuarios();
 
     @Procedure(name = "Usuario.actualizarUsuario")
-    String actualizarUsuario(@Param("p_id_usuario") Integer id, @Param("p_username") String username, @Param("p_password") String password, @Param("p_rol") String rol, @Param("p_estado") String estado);
+    String actualizarUsuario(@Param("p_id_usuario") Integer id, @Param("p_email") String email, @Param("p_password") String password, @Param("p_rol") String rol, @Param("p_estado") String estado);
 
     @Procedure(name = "Usuario.eliminarUsuario")
-    String eliminarUsuario(@Param("p_username") String username);
+    String eliminarUsuario(@Param("p_email") String email);
 
 }

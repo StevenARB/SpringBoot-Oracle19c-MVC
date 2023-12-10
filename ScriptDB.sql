@@ -221,7 +221,7 @@ CREATE TABLE C##HospitalExpress.Pacientes (
     nombre VARCHAR2(50) NOT NULL,
     primer_apellido VARCHAR2(50) NOT NULL,
     segundo_apellido VARCHAR2(50) NOT NULL,
-    email VARCHAR2(255) NOT NULL,
+    email VARCHAR2(255) NOT NULL UNIQUE,
     direccion VARCHAR2(255) NOT NULL,
     genero VARCHAR2(50) NOT NULL,
     fecha_nac DATE NOT NULL,
@@ -238,24 +238,22 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_INSERTAR_PACIENTE (
     p_email IN VARCHAR2,
     p_direccion IN VARCHAR2,
     p_genero IN VARCHAR2,
-    p_fecha_nac IN DATE,
-    p_id_usuario IN INTEGER,
+    p_fecha_nac IN VARCHAR2,
     p_resultado OUT VARCHAR2
 )
 AS 
 BEGIN
     INSERT INTO
-        pacientes (nombre, primer_apellido, segundo_apellido, email, direccion, genero, fecha_nac, id_usuario)
+        pacientes (nombre, primer_apellido, segundo_apellido, email, direccion, genero, fecha_nac)
     VALUES
         (
             p_nombre,
             p_primer_apellido,
             p_segundo_apellido,
-            p_email,
+            p_email
             p_direccion,
             p_genero,
-            p_fecha_nac,
-            p_id_usuario
+            TO_DATE(p_fecha_nac, 'YYYY-MM-DD')
         );
     p_resultado := 'EXITO';
 EXCEPTION
@@ -272,14 +270,13 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_CONSULTAR_PACIENTE_ID (
     p_email OUT VARCHAR2,
     p_direccion OUT VARCHAR2,
     p_genero OUT VARCHAR2,
-    p_fecha_nac OUT VARCHAR2,
-    p_id_usuario OUT VARCHAR2,
+    p_fecha_nac OUT DATE,
     p_resultado OUT VARCHAR2
 ) 
 AS 
 BEGIN
-    SELECT nombre, primer_apellido, segundo_apellido, email, direccion, genero, fecha_nac, id_usuario
-    INTO p_nombre, p_primer_apellido, p_segundo_apellido, p_email, p_direccion, p_genero, p_fecha_nac, p_id_usuario
+    SELECT nombre, primer_apellido, segundo_apellido, email, direccion, genero, fecha_nac
+    INTO p_nombre, p_primer_apellido, p_segundo_apellido, p_email, p_direccion, p_genero, p_fecha_nac
     FROM pacientes
     WHERE id_paciente = p_id_paciente;
 
@@ -303,7 +300,7 @@ BEGIN
     p_resultado := 'EXITO';
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        p_resultado := 'ERROR: No se encontraron usuarios';
+        p_resultado := 'ERROR: No se encontraron pacientes';
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
@@ -318,7 +315,6 @@ CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ACTUALIZAR_PACIENTE (
     p_direccion IN VARCHAR2,
     p_genero IN VARCHAR2,
     p_fecha_nac IN VARCHAR2,
-    p_id_usuario IN INTEGER,
     p_resultado OUT VARCHAR2
 ) 
 AS 
@@ -330,8 +326,7 @@ BEGIN
         email = p_email,
         direccion = p_direccion,
         genero = p_genero,
-        fecha_nac = p_fecha_nac,
-        id_usuario = p_id_usuario
+        fecha_nac = TO_DATE(p_fecha_nac, 'YYYY-MM-DD')
     WHERE id_paciente = p_id_paciente;
 
     IF SQL%ROWCOUNT > 0 THEN
@@ -346,13 +341,13 @@ END;
 
 --DELETE
 CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_ELIMINAR_PACIENTE (
-    p_id_paciente IN INTEGER,
+    p_email IN VARCHAR2,
     p_resultado OUT VARCHAR2
 ) 
 AS 
 BEGIN
     DELETE FROM C##HospitalExpress.Pacientes
-    WHERE id_paciente = p_id_paciente;
+    WHERE email = p_email;
     IF SQL%ROWCOUNT > 0 THEN
         p_resultado := 'EXITO: Paciente eliminado exitosamente';
     ELSE
@@ -363,24 +358,50 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
---VIEW Usuarios Pacientes
-CREATE OR REPLACE VIEW C##HospitalExpress.Vista_Usuarios_Pacientes AS
-SELECT
-    U.id_usuario,
-    U.email,
-    U.rol,
-    U.estado,
-    P.id_paciente,
-    P.nombre,
-    P.primer_apellido,
-    P.segundo_apellido,
-    P.direccion,
-    P.genero,
-    P.fecha_nac
-FROM
-    Usuarios U
-JOIN
-    Pacientes P ON U.id_usuario = P.id_usuario;
+CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_PACIENTES
+BEFORE INSERT ON C##HospitalExpress.Pacientes
+FOR EACH ROW
+DECLARE
+    v_id_usuario INTEGER;
+    v_rol VARCHAR2(25);
+    v_estado VARCHAR2(25);
+    v_resultado VARCHAR2(50);
+BEGIN
+    C##HospitalExpress.SP_CONSULTAR_USUARIO_EMAIL(:NEW.email, v_id_usuario, v_rol, v_estado, v_resultado);
+    CASE
+        WHEN v_resultado = 'EXITO' THEN
+            :NEW.id_usuario := v_id_usuario;
+        WHEN v_resultado = 'ERROR: Usuario no encontrado' THEN
+            INSERT INTO C##HospitalExpress.Usuarios (email, password, rol, estado)
+            VALUES (:NEW.email, NULL, 'Paciente', 'Activo')
+            RETURNING id_usuario INTO :NEW.id_usuario;
+        ELSE
+            RAISE_APPLICATION_ERROR(-20001, 'Error al consultar el usuario: ' || v_resultado);
+    END CASE;
+END;
+
+CREATE OR REPLACE TRIGGER TRG_BEFORE_UPDATE_PACIENTES
+BEFORE UPDATE ON C##HospitalExpress.Pacientes
+FOR EACH ROW
+DECLARE
+    v_id_usuario INTEGER;
+    v_rol VARCHAR2(25);
+    v_estado VARCHAR2(25);
+    v_resultado VARCHAR2(50);
+BEGIN
+    C##HospitalExpress.SP_CONSULTAR_USUARIO_EMAIL(:NEW.email, v_id_usuario, v_rol, v_estado, v_resultado);
+    CASE
+        WHEN v_resultado = 'EXITO' THEN
+            :NEW.id_usuario := v_id_usuario;
+        WHEN v_resultado = 'ERROR: Usuario no encontrado' THEN
+            INSERT INTO C##HospitalExpress.Usuarios (email, password, rol, estado)
+            VALUES (:NEW.email, NULL, 'Paciente', 'Activo')
+            RETURNING id_usuario INTO :NEW.id_usuario;
+        ELSE
+            RAISE_APPLICATION_ERROR(-20001, 'Error al consultar el usuario: ' || v_resultado);
+    END CASE;
+END;
+
 
 
 

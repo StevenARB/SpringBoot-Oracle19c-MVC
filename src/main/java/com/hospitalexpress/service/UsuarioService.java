@@ -25,9 +25,9 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     @Transactional
-    public String insertarUsuario(String username, String password, String rol, String estado) {
+    public String insertarUsuario(String email, String password, String rol, String estado) {
         try {
-            String result = usuarioRepository.insertarUsuario(username, password, rol, estado);
+            String result = usuarioRepository.insertarUsuario(email, password, rol, estado);
             return result;
         } catch (Exception e) {
             return null;
@@ -42,14 +42,14 @@ public class UsuarioService {
 
             for (Object[] result : resultList) {
                 BigDecimal id = (BigDecimal) result[0];
-                String username = (String) result[1];
+                String email = (String) result[1];
                 String password = (String) result[2];
                 String rol = (String) result[3];
                 String estado = (String) result[4];
 
                 Usuario usuario = new Usuario();
                 usuario.setId(id.intValue());
-                usuario.setUsername(username);
+                usuario.setEmail(email);
                 usuario.setPassword(password);
                 usuario.setRol(rol);
                 usuario.setEstado(estado);
@@ -76,7 +76,7 @@ public class UsuarioService {
             if (result.get("p_resultado").equals("EXITO")) {
                 Usuario usuario = new Usuario();
                 usuario.setId((Integer) id);
-                usuario.setUsername((String) result.get("p_username"));
+                usuario.setEmail((String) result.get("p_email"));
                 usuario.setPassword((String) result.get("p_password"));
                 usuario.setRol((String) result.get("p_rol"));
                 usuario.setEstado((String) result.get("p_estado"));
@@ -90,14 +90,14 @@ public class UsuarioService {
         }
     }
 
-    public Usuario getUsuarioByUsername(String username) {
+    public Usuario getUsuarioByEmail(String email) {
         try {
 
-            Map<String, Object> result = usuarioRepository.getUsuarioByUsername(username);
+            Map<String, Object> result = usuarioRepository.getUsuarioByEmail(email);
 
             if (result.get("p_resultado").equals("EXITO")) {
                 Usuario usuario = new Usuario();
-                usuario.setUsername((String) username);
+                usuario.setEmail((String) email);
                 usuario.setId((Integer) result.get("p_id_usuario"));
                 usuario.setRol((String) result.get("p_rol"));
                 usuario.setEstado((String) result.get("p_estado"));
@@ -112,10 +112,9 @@ public class UsuarioService {
     }
 
     @Transactional
-    public String actualizarUsuario(Integer id, 
-            String username, String password, String rol, String estado) {
+    public String actualizarUsuario(Integer id, String email, String password, String rol, String estado) {
         try {
-            String result = usuarioRepository.actualizarUsuario(id, username, password, rol, estado);
+            String result = usuarioRepository.actualizarUsuario(id, email, password, rol, estado);
             return result;
         } catch (Exception e) {
             return null;
@@ -123,9 +122,9 @@ public class UsuarioService {
     }
 
     @Transactional
-    public String eliminarUsuario(String username) {
+    public String eliminarUsuario(String email) {
         try {
-            String result = usuarioRepository.eliminarUsuario(username);
+            String result = usuarioRepository.eliminarUsuario(email);
             return result;
         } catch (Exception e) {
             return null;

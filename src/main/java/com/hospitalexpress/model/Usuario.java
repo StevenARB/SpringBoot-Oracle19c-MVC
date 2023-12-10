@@ -25,7 +25,7 @@ import lombok.Setter;
 @Setter
 
 @NamedStoredProcedureQuery(name = "Usuario.insertarUsuario", procedureName = "SP_INSERTAR_USUARIO", parameters = {
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_email", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_password", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_rol", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_estado", type = String.class),
@@ -33,14 +33,14 @@ import lombok.Setter;
 
 @NamedStoredProcedureQuery(name = "Usuario.getUsuarioById", procedureName = "SP_CONSULTAR_USUARIO_ID", parameters = {
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_usuario", type = Integer.class),
-    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_username", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_email", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_password", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_rol", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_estado", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
 
-@NamedStoredProcedureQuery(name = "Usuario.getUsuarioByUsername", procedureName = "SP_CONSULTAR_USUARIO_USERNAME", parameters = {
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
+@NamedStoredProcedureQuery(name = "Usuario.getUsuarioByEmail", procedureName = "SP_CONSULTAR_USUARIO_EMAIL", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_email", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_id_usuario", type = Integer.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_rol", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_estado", type = String.class),
@@ -52,14 +52,14 @@ import lombok.Setter;
 
 @NamedStoredProcedureQuery(name = "Usuario.actualizarUsuario", procedureName = "SP_ACTUALIZAR_USUARIO", parameters = {
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_usuario", type = Integer.class),
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_email", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_password", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_rol", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_estado", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
 
 @NamedStoredProcedureQuery(name = "Usuario.eliminarUsuario", procedureName = "SP_ELIMINAR_USUARIO", parameters = {
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_email", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
 
 public class Usuario {
@@ -68,8 +68,8 @@ public class Usuario {
     @Column(name = "id_usuario")
     private Integer id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "email")
+    private String email;
 
     @Column(name = "password")
     private String password;
