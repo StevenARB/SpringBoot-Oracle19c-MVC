@@ -562,10 +562,18 @@ BEFORE DELETE ON C##HospitalExpress.Doctor
 FOR EACH ROW
 BEGIN
     IF :OLD.estado = 'Activo' THEN
-        RAISE_APPLICATION_ERROR(-20001, 'No se puede eliminar un doctor activo. Desactívelo primero.');
+        RAISE_APPLICATION_ERROR(-20001, 'No se puede eliminar un doctor activo. Desactivar primero.');
     END IF;
 END;
-/
+
+CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_UPDATE_TELEFONO_FORMATO
+BEFORE INSERT OR UPDATE ON C##HospitalExpress.Doctor
+FOR EACH ROW
+BEGIN
+    IF REGEXP_LIKE(:NEW.telefono, '^[0-9-]{1,}$') = FALSE THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Error: El formato del número de teléfono no es válido. Debe contener solo dígitos y el carácter "-".');
+    END IF;
+END;
 
 
 --VISTA DE DOCTORES
@@ -625,17 +633,17 @@ BEGIN
 END;
 
 --FUNCIONES Doctor
-CREATE OR REPLACE FUNCTION FN_DOCTORES_MAYORES_30 
-RETURN SYS_REFCURSOR AS 
-d_cursor SYS_REFCURSOR;
+CREATE OR REPLACE FUNCTION FN_CONTAR_DOCTORES_ACTIVOS
+RETURN INTEGER
+AS
+    cantidad_activos INTEGER;
 BEGIN
-    OPEN d_cursor FOR 
-        SELECT id_doctor, NOMBRE, FECHA_NACIMIENTO, ESTADO
-        FROM DOCTOR
-        WHERE TRUNC(MONTHS_BETWEEN(SYSDATE, FECHA_NACIMIENTO) / 12) >=30;
-        
-    RETURN d_cursor;
-END;
+    SELECT COUNT(*) INTO cantidad_activos
+    FROM C##HospitalExpress.Doctor
+    WHERE estado = 'Activo';
+
+    RETURN cantidad_activos;
+END contar_doctores_activos;
     
 
 
@@ -1160,28 +1168,19 @@ FROM
 
 
 ----TRIGGER PRODUCTOS
-CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_PRODUCTOS
-BEFORE INSERT ON C##HospitalExpress.Productos
-FOR EACH ROW
-BEGIN
-    IF :NEW.Cantidad IS NULL THEN
-        :NEW.Cantidad := 0;
-    END IF;
-END;
 
-CREATE OR REPLACE TRIGGER tr_before_insert_producto
-BEFORE INSERT ON C##HospitalExpress.Productos
+CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_UPDATE_CANTIDAD_PRODUCTO
+BEFORE INSERT OR UPDATE ON C##HospitalExpress.Productos
 FOR EACH ROW
 BEGIN
     IF :NEW.Cantidad < 50 THEN
-        RAISE_APPLICATION_ERROR(-20012, 'No se puede insertar un producto con una cantidad inferior a 50.');
+        RAISE_APPLICATION_ERROR(-20012, 'No se puede insertar o actualizar un producto con una cantidad inferior a 50.');
     END IF;
 END;
-/
 
 
-CREATE OR REPLACE TRIGGER tr_before_insert_producto
-BEFORE INSERT ON C##HospitalExpress.Productos
+CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_UPDATE_NEW_PRODUCTO
+BEFORE INSERT OR UPDATE ON C##HospitalExpress.Productos
 FOR EACH ROW
 DECLARE
     v_count NUMBER;
@@ -1194,7 +1193,16 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20001, 'Ya existe un producto con el mismo nombre.');
     END IF;
 END;
-/
+
+
+CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_UPDATE_PRICE_PRODUCTO
+BEFORE INSERT OR UPDATE ON C##HospitalExpress.Productos
+FOR EACH ROW
+BEGIN
+    IF :NEW.Precio <= 1 THEN
+        RAISE_APPLICATION_ERROR(-20006, 'El precio del producto debe ser mayor a 1 dolare(s).');
+    END IF;
+END; 
 
 
 
@@ -1396,12 +1404,16 @@ EXCEPTION
 END SP_ELIMINAR_MEDICAMENTO;
 
 
+----------------Triggers
 
-
-
-
-
-
+CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_UPDATE_PRICE_MEDICAMENTO
+BEFORE INSERT OR UPDATE ON C##HospitalExpress.Medicamentos
+FOR EACH ROW
+BEGIN
+    IF :NEW.Precio <= 1 THEN
+        RAISE_APPLICATION_ERROR(-20006, 'El precio del medicamento debe ser mayor a 1 dolare(s).');
+    END IF;
+END; 
 
 
 /*--------------------Facturas--------------------*/
@@ -1669,5 +1681,20 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
+---------------------Triggers
 
+CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_UPDATE_NOMBRE_TRATAMIENTO
+BEFORE INSERT OR UPDATE ON Tratamientos
+FOR EACH ROW
+DECLARE
+    p_count INTEGER;
+BEGIN
+    SELECT COUNT(*)
+    INTO p_count
+    FROM Tratamientos
+    WHERE UPPER(nombre) = UPPER(:NEW.nombre);
 
+    IF p_count > 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Ya existe un tratamiento con el mismo nombre.');
+    END IF;
+END;
