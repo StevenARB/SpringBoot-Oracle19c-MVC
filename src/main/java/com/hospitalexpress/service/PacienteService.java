@@ -99,8 +99,6 @@ public class PacienteService {
             Map<String, Object> result = pacienteRepository.getPacienteById(id);
             Map<String, Object> resultUsuario = usuarioRepository.getUsuarioByEmail((String) result.get("p_email"));
 
-            System.out.println(result);
-            System.out.println(resultUsuario);
             SimpleDateFormat formatoOriginal = new SimpleDateFormat("dd/MM/yy");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -113,10 +111,8 @@ public class PacienteService {
                 paciente.setEmail((String) result.get("p_email"));
                 paciente.setDireccion((String) result.get("p_direccion"));
                 paciente.setGenero((String) result.get("p_genero"));
-                System.out.println(result.get("p_fecha_nac"));
 
                 paciente.setFechaNac((String) dateFormat.format(formatoOriginal.parse((String) result.get("p_fecha_nac"))));
-                System.out.println(paciente.getFechaNac());
 
                 if (resultUsuario.get("p_resultado").equals("EXITO")) {
                     Usuario usuario = new Usuario();
@@ -182,7 +178,6 @@ public class PacienteService {
     public Integer getNumeroPacientes() {
         try {
             Integer numeroPacientes = pacienteRepository.getNumeroPacientes(null);
-            System.out.println(numeroPacientes);
             if (numeroPacientes > 0) {
                 return numeroPacientes;
             } else {

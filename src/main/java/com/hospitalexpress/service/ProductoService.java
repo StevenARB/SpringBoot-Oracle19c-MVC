@@ -29,8 +29,6 @@ private ProductoRepository productoRepository;
                 producto.setCantidad((Integer) result.get("p_cantidad"));
                 producto.setPrecio((BigDecimal) result.get("p_precio"));
 
-                System.out.println(producto.getId());
-
                 return producto;
             } else {
                 return null;
@@ -122,7 +120,5 @@ public String eliminarProducto(Integer id) {
         return null;
     }
 }
-
-    
 
 }
