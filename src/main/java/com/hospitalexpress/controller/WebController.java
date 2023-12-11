@@ -4,8 +4,13 @@
  */
 package com.hospitalexpress.controller;
 
+import com.hospitalexpress.service.DoctorService;
+import com.hospitalexpress.service.PacienteService;
+import com.hospitalexpress.service.UsuarioService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
 
 /**
  *
@@ -13,6 +18,15 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class WebController {
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private PacienteService pacienteService;
+
+    @Autowired
+    private DoctorService doctorService;
 
     @GetMapping("/register")
     public String register() {
@@ -25,10 +39,16 @@ public class WebController {
     }
 
     @GetMapping("/admin")
-    public String admin() {
+    public String admin(Model model) {
+        try {
+            model.addAttribute("numeroUsuarios", usuarioService.getNumeroUsuarios());
+            model.addAttribute("numeroPacientes", pacienteService.getNumeroPacientes());
+            model.addAttribute("numeroDoctores", doctorService.getNumeroDoctores());
+        } catch (Exception e) {
+        }
         return "admin";
     }
-    
+
     @GetMapping("/farmacia")
     public String farmacia() {
         return "farmacia";

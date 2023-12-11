@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="auto">
+<html lang="es" data-bs-theme="auto" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
     <head>
         <meta charset="UTF-8">
@@ -237,19 +237,19 @@
                     <div class="card border-primary m-5" style="height: 10rem; width: 15rem; max-width: 18rem;">
                         <div class="card-header text-primary d-flex justify-content-center">Usuarios</div>
                         <div class="card-body text-primary d-flex justify-content-center align-items-center">
-                            <h2 class="card-title"><strong>1257</strong></h2>
+                            <h2 class="card-title"><strong th:text="${numeroUsuarios}"></strong></h2>
                         </div>
                     </div>
                     <div class="card border-warning m-5" style="height: 10rem; width: 15rem; max-width: 18rem;">
                         <div class="card-header text-warning d-flex justify-content-center">Pacientes</div>
                         <div class="card-body text-warning d-flex justify-content-center align-items-center">
-                            <h2 class="card-title"><strong>1257</strong></h2>
+                            <h2 class="card-title"><strong th:text="${numeroPacientes}"></strong></h2>
                         </div>
                     </div>
                     <div class="card border-danger m-5" style="height: 10rem; width: 15rem; max-width: 18rem;">
                         <div class="card-header text-danger d-flex justify-content-center">Doctores</div>
                         <div class="card-body text-danger d-flex justify-content-center align-items-center">
-                            <h2 class="card-title"><strong>1257</strong></h2>
+                            <h2 class="card-title"><strong th:text="${numeroDoctores}"></strong></h2>
                         </div>
                     </div>
                 </div>
