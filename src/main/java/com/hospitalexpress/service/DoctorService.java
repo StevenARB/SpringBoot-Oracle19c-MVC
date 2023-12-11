@@ -40,29 +40,29 @@ public class DoctorService {
             return null;
         }
     }
-    
+
     @Transactional(readOnly = true)
-public List<Doctor> getDoctores() {
-    try {
-        List<Object[]> resultList = doctorRepository.getDoctores();
-        List<Doctor> doctores = new ArrayList<>();
+    public List<Doctor> getDoctores() {
+        try {
+            List<Object[]> resultList = doctorRepository.getDoctores();
+            List<Doctor> doctores = new ArrayList<>();
 
-        for (Object[] result : resultList) {
-            BigDecimal idDoctor = (BigDecimal) result[0];
-            String nombre = (String) result[1];
-            String direccion = (String) result[2];
-            String telefono = (String) result[3];
-            String estado = (String) result[4];
+            for (Object[] result : resultList) {
+                BigDecimal idDoctor = (BigDecimal) result[0];
+                String nombre = (String) result[1];
+                String direccion = (String) result[2];
+                String telefono = (String) result[3];
+                String estado = (String) result[4];
 
-            Doctor doctor = new Doctor();
-            doctor.setId(idDoctor.intValue());
-            doctor.setNombre(nombre);
-            doctor.setDireccion(direccion);
-            doctor.setTelefono(telefono);
-            doctor.setEstado(estado);
+                Doctor doctor = new Doctor();
+                doctor.setId(idDoctor.intValue());
+                doctor.setNombre(nombre);
+                doctor.setDireccion(direccion);
+                doctor.setTelefono(telefono);
+                doctor.setEstado(estado);
 
-            doctores.add(doctor);
-        }
+                doctores.add(doctor);
+            }
 
             if (!doctores.isEmpty()) {
                 return doctores;
@@ -70,41 +70,54 @@ public List<Doctor> getDoctores() {
                 return null;
             }
 
-    } catch (Exception e) {
-        return null;
+        } catch (Exception e) {
+            return null;
+        }
     }
-}
 
-@Transactional
-public String actualizarDoctor(Integer id, String nombre, String direccion, String telefono, String estado) {
-    try {
-        String result = doctorRepository.actualizarDoctor(id, nombre, direccion, telefono, estado);
-        return result;
-    } catch (Exception e) {
-        return null;
+    @Transactional
+    public String actualizarDoctor(Integer id, String nombre, String direccion, String telefono, String estado) {
+        try {
+            String result = doctorRepository.actualizarDoctor(id, nombre, direccion, telefono, estado);
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
     }
-}
 
-@Transactional
-public String insertarDoctor(String nombre, String direccion, String telefono, String estado) {
-    try {
-        String result = doctorRepository.insertarDoctor(nombre, direccion, telefono, estado);
-        return result;
-    } catch (Exception e) {
-        return null;
+    @Transactional
+    public String insertarDoctor(String nombre, String direccion, String telefono, String estado) {
+        try {
+            String result = doctorRepository.insertarDoctor(nombre, direccion, telefono, estado);
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
     }
-}
-    
-    
-    
-@Transactional
-public String eliminarDoctor(Integer id) {
-    try {
-        String result = doctorRepository.eliminarDoctor(id);
-        return result;
-    } catch (Exception e) {
-        return null;
+
+    @Transactional
+    public String eliminarDoctor(Integer id) {
+        try {
+            String result = doctorRepository.eliminarDoctor(id);
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
     }
-}
     
+    @Transactional(readOnly = true)
+    public Integer getNumeroDoctores() {
+        try {
+            Integer numeroDoctores = doctorRepository.getNumeroDoctores(null);
+            if (numeroDoctores > 0) {
+                return numeroDoctores;
+            } else {
+                return 0;
+            }
+
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
 }

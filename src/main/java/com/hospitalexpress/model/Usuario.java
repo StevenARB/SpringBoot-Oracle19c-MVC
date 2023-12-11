@@ -62,6 +62,9 @@ import lombok.Setter;
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_email", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)})
 
+@NamedStoredProcedureQuery(name = "Usuario.getNumeroUsuarios", procedureName = "SP_GET_NUMERO_USUARIOS", parameters = {
+    @StoredProcedureParameter(mode = ParameterMode.INOUT, name = "p_resultado", type = Integer.class)})
+
 public class Usuario {
 
     @Id

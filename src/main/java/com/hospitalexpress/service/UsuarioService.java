@@ -64,6 +64,7 @@ public class UsuarioService {
             }
 
         } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
     }
@@ -128,6 +129,21 @@ public class UsuarioService {
             return result;
         } catch (Exception e) {
             return null;
+        }
+    }
+    
+    @Transactional(readOnly = true)
+    public Integer getNumeroUsuarios() {
+        try {
+            Integer numeroUsuarios = usuarioRepository.getNumeroUsuarios(null);
+            if (numeroUsuarios > 0) {
+                return numeroUsuarios;
+            } else {
+                return 0;
+            }
+
+        } catch (Exception e) {
+            return 0;
         }
     }
 }

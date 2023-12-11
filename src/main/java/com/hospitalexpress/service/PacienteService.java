@@ -177,4 +177,20 @@ public class PacienteService {
             return null;
         }
     }
+
+    @Transactional(readOnly = true)
+    public Integer getNumeroPacientes() {
+        try {
+            Integer numeroPacientes = pacienteRepository.getNumeroPacientes(null);
+            System.out.println(numeroPacientes);
+            if (numeroPacientes > 0) {
+                return numeroPacientes;
+            } else {
+                return 0;
+            }
+
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 }

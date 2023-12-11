@@ -34,4 +34,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
     @Procedure(name = "Doctor.eliminarDoctor")
     String eliminarDoctor(@Param("p_id") Integer id);
+
+    @Procedure(name = "Doctor.getNumeroDoctores")
+    Integer getNumeroDoctores(@Param("p_resultado") Integer resultado);
 }

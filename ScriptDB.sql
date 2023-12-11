@@ -194,16 +194,43 @@ EXCEPTION
         p_resultado := 'ERROR: ' || SQLERRM;
 END;
 
+--VISTA Usuarios
+CREATE VIEW C##HospitalExpress.VISTA_USUARIOS AS
+SELECT id_usuario, email, password, rol, estado
+FROM C##HospitalExpress.Usuarios;
+
 --FUNCIONES Usuarios
 CREATE OR REPLACE FUNCTION C##HospitalExpress.GET_NUMERO_USUARIOS RETURN INTEGER
 AS
     v_numero_usuarios INTEGER;
+    CURSOR v_numero_usuarios_cursor IS
+        SELECT COUNT(*) AS numero_usuarios
+        FROM VISTA_USUARIOS
+        WHERE Estado = 'Activo';
 BEGIN
-    SELECT COUNT(*) INTO v_numero_usuarios FROM usuarios;
+    OPEN v_numero_usuarios_cursor;
+    FETCH v_numero_usuarios_cursor INTO v_numero_usuarios;
+    CLOSE v_numero_usuarios_cursor;
+
     RETURN v_numero_usuarios;
 EXCEPTION
     WHEN OTHERS THEN
         RETURN -1;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_GET_NUMERO_USUARIOS (
+    p_resultado OUT INTEGER
+)
+AS 
+BEGIN
+    p_resultado := GET_NUMERO_USUARIOS;
+
+    IF p_resultado = -1 THEN
+        p_resultado := 0;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 0;
 END;
 
 
@@ -356,6 +383,54 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         p_resultado := 'ERROR: ' || SQLERRM;
+END;
+
+--VISTA Pacientes
+CREATE OR REPLACE VIEW C##HospitalExpress.VISTA_PACIENTES AS
+SELECT
+  id_paciente,
+  nombre,
+  primer_apellido,
+  segundo_apellido,
+  email,
+  direccion,
+  genero,
+  fecha_nac,
+  id_usuario
+FROM
+  C##HospitalExpress.Pacientes;
+
+--FUNCIONES Pacientes
+CREATE OR REPLACE FUNCTION C##HospitalExpress.GET_NUMERO_PACIENTES RETURN INTEGER
+AS
+    v_numero_pacientes INTEGER;
+    CURSOR v_numero_pacientes_cursor IS
+        SELECT COUNT(*) AS numero_pacientes
+        FROM VISTA_PACIENTES;
+BEGIN
+    OPEN v_numero_pacientes_cursor;
+    FETCH v_numero_pacientes_cursor INTO v_numero_pacientes;
+    CLOSE v_numero_pacientes_cursor;
+
+    RETURN v_numero_pacientes;
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN -1;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_GET_NUMERO_PACIENTES (
+    p_resultado OUT INTEGER
+)
+AS 
+BEGIN
+    p_resultado := GET_NUMERO_PACIENTES;
+
+    IF p_resultado = -1 THEN
+        p_resultado := 0;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 0;
 END;
 
 CREATE OR REPLACE TRIGGER TRG_BEFORE_INSERT_PACIENTES
@@ -577,7 +652,7 @@ END;
 
 
 --VISTA DE DOCTORES
-CREATE OR REPLACE VIEW Vista_Doctores AS
+CREATE OR REPLACE VIEW VISTA_DOCTORES AS
 SELECT
     id_doctor,
     nombre,
@@ -633,17 +708,38 @@ BEGIN
 END;
 
 --FUNCIONES Doctor
-CREATE OR REPLACE FUNCTION FN_CONTAR_DOCTORES_ACTIVOS
-RETURN INTEGER
+CREATE OR REPLACE FUNCTION C##HospitalExpress.GET_NUMERO_DOCTORES RETURN INTEGER
 AS
-    cantidad_activos INTEGER;
+    v_numero_doctores INTEGER;
+    CURSOR v_numero_doctores_cursor IS
+        SELECT COUNT(*) AS numero_doctores
+        FROM VISTA_DOCTORES
+        WHERE estado = 'Activo';
 BEGIN
-    SELECT COUNT(*) INTO cantidad_activos
-    FROM C##HospitalExpress.Doctor
-    WHERE estado = 'Activo';
+    OPEN v_numero_doctores_cursor;
+    FETCH v_numero_doctores_cursor INTO v_numero_doctores;
+    CLOSE v_numero_doctores_cursor;
 
-    RETURN cantidad_activos;
-END contar_doctores_activos;
+    RETURN v_numero_doctores;
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN -1;
+END;
+
+CREATE OR REPLACE PROCEDURE C##HospitalExpress.SP_GET_NUMERO_DOCTORES (
+    p_resultado OUT INTEGER
+)
+AS 
+BEGIN
+    p_resultado := GET_NUMERO_DOCTORES;
+
+    IF p_resultado = -1 THEN
+        p_resultado := 0;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        p_resultado := 0;
+END;
     
 
 
@@ -847,6 +943,7 @@ BEGIN
     
     RETURN v_cantidad;
 END;
+
 
 
 
