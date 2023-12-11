@@ -37,8 +37,6 @@ public class EspecialidadService {
                 especialidad.setNombre((String) result.get("p_nombre"));
                 especialidad.setDescripcion((String) result.get("p_descripcion"));
 
-                System.out.println(especialidad.getId());
-
                 return especialidad;
             } else {
                 return null;

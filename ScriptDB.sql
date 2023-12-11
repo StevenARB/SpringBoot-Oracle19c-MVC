@@ -277,7 +277,7 @@ BEGIN
             p_nombre,
             p_primer_apellido,
             p_segundo_apellido,
-            p_email
+            p_email,
             p_direccion,
             p_genero,
             TO_DATE(p_fecha_nac, 'YYYY-MM-DD')

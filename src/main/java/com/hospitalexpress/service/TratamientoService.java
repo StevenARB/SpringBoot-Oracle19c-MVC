@@ -37,8 +37,6 @@ public Tratamiento getTratamientoById(Integer idTratamiento) {
             tratamiento.setNombre((String) result.get("p_nombre"));
             tratamiento.setDescripcion((String) result.get("p_descripcion"));
 
-            System.out.println(tratamiento.getId());
-
             return tratamiento;
         } else {
             return null;
