@@ -14,6 +14,17 @@ import lombok.Setter;
 @Table(name = "Especialidades")
 @Getter
 @Setter
+
+@NamedStoredProcedureQuery(
+    name = "Especialidad.insertarEspecialidad",
+    procedureName = "SP_INSERTAR_ESPECIALIDAD",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_descripcion", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
 @NamedStoredProcedureQuery(
     name = "Especialidad.getEspecialidadById",
     procedureName = "C##HospitalExpress.SP_CONSULTAR_ESPECIALIDAD",
@@ -26,15 +37,34 @@ import lombok.Setter;
 )
 
 @NamedStoredProcedureQuery(
-    name = "Especialidad.InsertarEspecialidad",
-    procedureName = "SP_INSERTAR_ESPECIALIDAD",
+    name = "Especialidad.getEspecialidades",
+    procedureName = "SP_CONSULTAR_ESPECIALIDADES",
     parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cursor", type = Object.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
+
+@NamedStoredProcedureQuery(
+    name = "Especialidad.actualizarEspecialidad",
+    procedureName = "SP_ACTUALIZAR_ESPECIALIDAD",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_especialidad", type = Integer.class),
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_descripcion", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
     }
 )
 
+@NamedStoredProcedureQuery(
+    name = "Especialidad.eliminarEspecialidad",
+    procedureName = "SP_ELIMINAR_ESPECIALIDAD",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_especialidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
 
 public class Especialidad {
 

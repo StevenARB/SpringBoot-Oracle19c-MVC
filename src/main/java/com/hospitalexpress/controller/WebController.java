@@ -14,9 +14,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class WebController {
 
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
     @GetMapping("/admin")
     public String admin() {
         return "admin";
     }
     
+    @GetMapping("/farmacia")
+    public String farmacia() {
+        return "farmacia";
+    }
+
 }

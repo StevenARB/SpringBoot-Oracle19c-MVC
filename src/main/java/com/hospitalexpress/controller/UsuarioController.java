@@ -4,7 +4,6 @@
  */
 package com.hospitalexpress.controller;
 
-import com.hospitalexpress.model.Producto;
 import com.hospitalexpress.model.Usuario;
 import com.hospitalexpress.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,9 @@ public class UsuarioController {
     }
 
     @PostMapping("/usuario/insertar")
-    public String insertarProducto(Model model, @ModelAttribute Usuario usuario) {
+    public String insertarUsuario(Model model, @ModelAttribute Usuario usuario) {
         try {
-            String result = usuarioService.insertarUsuario(usuario.getUsername(), usuario.getPassword(), usuario.getRol(), usuario.getEstado());
+            String result = usuarioService.insertarUsuario(usuario.getEmail(), usuario.getPassword(), usuario.getRol(), usuario.getEstado());
             model.addAttribute("resultado", result);
         } catch (Exception e) {
             model.addAttribute("error", true);
@@ -58,10 +57,10 @@ public class UsuarioController {
         return "usuario/usuarios";
     }
 
-    @GetMapping("/findUsuarioByUsername/{username}")
-    public String findUsuarioByUsername(Model model, @PathVariable String username) {
+    @GetMapping("/findUsuarioByEmail/{email}")
+    public String findUsuarioByEmail(Model model, @PathVariable String email) {
         try {
-            Usuario usuario = usuarioService.getUsuarioByUsername(username);
+            Usuario usuario = usuarioService.getUsuarioByEmail(email);
             if (usuario != null) {
                 model.addAttribute("usuario", usuario);
             } else {
@@ -73,10 +72,36 @@ public class UsuarioController {
         return "usuarios";
     }
 
-    @GetMapping("/usuario/eliminar/{username}")
-    public String eliminarUsuario(Model model, @PathVariable String username) {
+    @GetMapping("/usuario/actualizar/{id}")
+    public String findUsuarioByIdToUpdate(Model model, @PathVariable Integer id) {
         try {
-            String result = usuarioService.eliminarUsuario(username);
+            Usuario usuario = usuarioService.getUsuarioById(id);
+            if (usuario != null) {
+                model.addAttribute("usuario", usuario);
+            } else {
+                model.addAttribute("usuarioNoEncontrado", true);
+            }
+        } catch (Exception e) {
+            model.addAttribute("usuarioNoEncontrado", true);
+        }
+        return "usuario/actualizar";
+    }
+
+    @PostMapping("/usuario/actualizar/{id}")
+    public String actualizarUsuario(Model model, @PathVariable Integer id, @ModelAttribute Usuario usuario) {
+        try {
+            String result = usuarioService.actualizarUsuario(id, usuario.getEmail(), usuario.getPassword(), usuario.getRol(), usuario.getEstado());
+            model.addAttribute("resultado", result);
+        } catch (Exception e) {
+            model.addAttribute("error", true);
+        }
+        return "redirect:/usuarios";
+    }
+
+    @GetMapping("/usuario/eliminar/{email}")
+    public String eliminarUsuario(Model model, @PathVariable String email) {
+        try {
+            String result = usuarioService.eliminarUsuario(email);
             model.addAttribute("resultado", result);
         } catch (Exception e) {
             model.addAttribute("error", true);

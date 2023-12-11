@@ -20,7 +20,7 @@ import lombok.Setter;
 @Setter   
 @NamedStoredProcedureQuery(
     name = "Producto.getProductoByNombre",
-    procedureName = "SP_CONSULTAR_PRODUCTOS",
+    procedureName = "SP_CONSULTAR_PRODUCTO",
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_id_producto", type = Integer.class),
@@ -32,7 +32,30 @@ import lombok.Setter;
 )
 
 @NamedStoredProcedureQuery(
-    name = "Producto.InsertarProducto",
+    name = "Producto.getProductoById",
+    procedureName = "SP_CONSULTAR_PRODUCTO_ID",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_producto", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_nombre", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_descripcion", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_cantidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_precio", type = BigDecimal.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
+@NamedStoredProcedureQuery(
+    name = "Producto.getProductos",
+    procedureName = "C##HospitalExpress.SP_CONSULTAR_PRODUCTOS",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cursor", type = Object.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
+
+@NamedStoredProcedureQuery(
+    name = "Producto.insertarProducto",
     procedureName = "SP_INSERTAR_PRODUCTOS",
     parameters = {
         @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
@@ -43,11 +66,36 @@ import lombok.Setter;
     }
 )
 
+@NamedStoredProcedureQuery(
+    name = "Producto.eliminarProducto",
+    procedureName = "SP_ELIMINAR_PRODUCTOS",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_producto", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
+@NamedStoredProcedureQuery(
+    name = "Producto.actualizarProducto",
+    procedureName = "SP_ACTUALIZAR_PRODUCTOS",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id_producto", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_nombre", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_descripcion", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_cantidad", type = Integer.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_precio", type = BigDecimal.class),
+        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_resultado", type = String.class)
+    }
+)
+
+
+
+
 public class Producto {
 
     @Id
-    @Column(name = "id_producto")
-    private Integer idProducto;
+    @Column(name = "id")
+    private Integer id;
 
     @Column(name = "nombre")
     private String nombre;
